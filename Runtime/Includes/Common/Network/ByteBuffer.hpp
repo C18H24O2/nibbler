@@ -5,11 +5,8 @@
 #include <concepts>
 #include <cstdint>
 #include <expected>
-#include <iomanip>
 #include <iostream>
-#include <iterator>
 #include <ostream>
-#include <ranges>
 #include <span>
 #include <string>
 #include <string_view>
@@ -90,8 +87,8 @@ namespace Nb::Common::Network
 			template<std::size_t Index, typename... Types>
 			bool ReadMultipleImpl(std::tuple<Types...>& result, Error& error, std::endian endian) noexcept;
 	};
-} // namespace Nb::Common::Network
+}
 
 #include <Common/Network/ByteBuffer.inl>
 
-#endif // NIBBLER_NETWORK_BYTEBUFFER_HPP
+#endif

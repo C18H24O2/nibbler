@@ -1,6 +1,7 @@
 #include <Common/Network/ByteBuffer.hpp>
 
 #include <algorithm>
+#include <iomanip>
 
 namespace Nb::Common::Network
 {

@@ -1,9 +1,10 @@
-#pragma once
+#ifndef NIBBLER_NETWORK_BYTEBUFFER_INL
+#define NIBBLER_NETWORK_BYTEBUFFER_INL
+
 #include <Common/Network/ByteBuffer.hpp>
 
 namespace Nb::Common::Network
 {
-
 	template<std::integral T>
 	void ByteBuffer::Write(T value, std::endian endian) noexcept
 	{
@@ -119,4 +120,6 @@ namespace Nb::Common::Network
 		}
 		return true;
 	}
-} // namespace Nb::Common::Network
+}
+
+#endif
