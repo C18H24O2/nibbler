@@ -121,6 +121,28 @@ for name, module in pairs(frontends) do
 	::continue::
 end
 
+target("nibbler_server")
+	set_kind("binary")
+
+	if has_config("unitybuild") then
+		add_rules("c++.unity_build", { batchsize = 6 })
+	end
+
+	add_defines("NB_GAMESERVER_BUILD")
+	if is_mode("debug") then
+		add_defines("NB_GAMESERVER_DEBUG")
+	end
+
+	for _, ext in ipairs({".h", ".hpp", ".inl"}) do
+		add_headerfiles("Runtime/Includes/Common/**" .. ext)
+		add_headerfiles("Runtime/Includes/GameServer/**" .. ext)
+		add_headerfiles("Runtime/Sources/GameServer/**" .. ext, { prefixdir = "private", install = false })
+	end
+
+	add_files("Runtime/Sources/Common/**.cpp")
+	add_files("Runtime/Sources/GameServer/**.cpp")
+target_end()
+
 target("nibbler")
 	set_kind("binary")
 
