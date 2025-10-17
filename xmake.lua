@@ -40,7 +40,7 @@ local frontends = {
 	},
 	SDL_GPU = {
 		option = "sdlgpu",
-		packages = { "libsdl" },
+		packages = { "libsdl3" },
 	},
 	Raylib = {
 	}
@@ -110,6 +110,7 @@ for name, module in pairs(frontends) do
 			add_deps(table.unpack(module.deps))
 		end
 
+		add_files("Runtime/Sources/Common/**.cpp")
 		add_files("Runtime/Sources/Frontends/" .. name .. "/**.cpp")
 
 		if module.custom then
@@ -138,6 +139,7 @@ target("nibbler")
 		add_headerfiles("Runtime/Sources/Game/**" .. ext, { prefixdir = "private", install = false })
 	end
 
+	add_files("Runtime/Sources/Common/**.cpp")
 	add_files("Runtime/Sources/Game/**.cpp")
 
 	for name, module in pairs(frontends) do
