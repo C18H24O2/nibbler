@@ -16,9 +16,9 @@ elseif is_mode("release") then
 	add_vectorexts("sse", "sse2", "sse3", "ssse3")
 end
 
-add_includedirs("Runtime/Includes")
+add_includedirs("Runtime/Includes", "Build")
 
-set_languages("cxx20")
+set_languages("cxx23")
 
 local frontends = {
 	GLFWVulkan = {
@@ -90,7 +90,9 @@ for name, module in pairs(frontends) do
 			add_headerfiles("Runtime/Includes/Common/**" .. ext)
 			add_headerfiles("Runtime/Includes/Frontends/" .. name .. "/**" .. ext)
 			add_headerfiles("Runtime/Sources/Frontends/" .. name .. "/**" .. ext, { prefixdir = "private", install = false })
+			add_includedirs("Build/Frontends/" .. name .. "/**" .. ext, { prefixdir = "private", install = false })
 		end
+
 
 		remove_headerfiles("Runtime/Sources/Frontends/" .. name .. "/Resources/**.h")
 
