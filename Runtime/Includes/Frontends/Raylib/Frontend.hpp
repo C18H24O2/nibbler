@@ -1,15 +1,15 @@
-#ifndef NIBBLER_GLFW_VULKAN_FRONTEND_HPP
-#define NIBBLER_GLFW_VULKAN_FRONTEND_HPP
+#ifndef NIBBLER_RAYLIB_FRONTEND_HPP
+#define NIBBLER_RAYLIB_FRONTEND_HPP
 
 #include <Common/Frontend/Frontend.hpp>
 
-namespace Nb::SdlGpu
+namespace Nb::Raylib
 {
-	class GLFWVulkanFrontend : public Common::Frontend
+	class RaylibFrontend : public Common::Frontend
 	{
 		public:
-			GLFWVulkanFrontend() = default;
-			~GLFWVulkanFrontend() override = default;
+			RaylibFrontend() = default;
+			~RaylibFrontend() override = default;
 
 		private:
 	};
