@@ -15,10 +15,9 @@ int main()
 	buffer.Seek(0);
 	std::cout << buffer << std::endl;
 
-	auto result = buffer.ReadMultiple<std::uint8_t, std::uint16_t, std::uint32_t>();
-	if (result) {
+	if (auto result = buffer.ReadMultiple<std::uint8_t, std::uint16_t, std::uint32_t>()) {
 		auto [a, b, c] = *result;
-		std::cout << (int)a << " " << b << " " << c << std::endl;
+		std::cout << static_cast<int>(a) << " " << b << " " << c << std::endl;
 	} else {
 		std::cout << result.error() << std::endl;
 	}
@@ -85,8 +84,6 @@ int main()
 	TEST_VARLONG(-4294967296);
 	TEST_VARLONG(std::numeric_limits<std::int64_t>::min());
 	TEST_VARLONG(std::numeric_limits<std::int64_t>::max());
-
-
 
 	return 0;
 }

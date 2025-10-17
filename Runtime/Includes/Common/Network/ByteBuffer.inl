@@ -6,9 +6,10 @@
 namespace Nb::Common::Network
 {
 	template<std::integral T>
-	void ByteBuffer::Write(T value, std::endian endian) noexcept
+	void ByteBuffer::Write(T value, const std::endian endian) noexcept
 	{
-		if (endian != std::endian::native) {
+		if (endian != std::endian::native)
+		{
 			value = Byteswap(value);
 		}
 
@@ -23,9 +24,10 @@ namespace Nb::Common::Network
 		Write(std::bit_cast<IntType>(value), endian);
 	}
 	template<std::integral T>
-	[[nodiscard]] std::expected<T, ByteBuffer::Error> ByteBuffer::Read(std::endian endian) noexcept
+	[[nodiscard]] std::expected<T, ByteBuffer::Error> ByteBuffer::Read(const std::endian endian) noexcept
 	{
-		if (m_position + sizeof(T) > m_buffer.size()) {
+		if (m_position + sizeof(T) > m_buffer.size())
+		{
 			return std::unexpected(Error::InsufficientData);
 		}
 
@@ -34,7 +36,8 @@ namespace Nb::Common::Network
 		m_position += sizeof(T);
 
 		T value = std::bit_cast<T>(bytes);
-		if (endian != std::endian::native) {
+		if (endian != std::endian::native)
+		{
 			value = Byteswap(value);
 		}
 
@@ -47,7 +50,8 @@ namespace Nb::Common::Network
 		using IntType = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>;
 
 		auto int_result = Read<IntType>(endian);
-		if (!int_result) {
+		if (!int_result)
+		{
 			return std::unexpected(int_result.error());
 		}
 
@@ -59,17 +63,19 @@ namespace Nb::Common::Network
 	{
 		std::tuple<Types...> result;
 		Error error;
-		bool success = ReadMultipleImpl<0, Types...>(result, error, endian);
-		if (!success) {
+                const bool success = ReadMultipleImpl<0, Types...>(result, error, endian);
+		if (!success)
+		{
 			return std::unexpected(error);
 		}
 		return result;
 	}
 
 	template<std::integral T>
-	[[nodiscard]] std::expected<T, ByteBuffer::Error> ByteBuffer::Peek(std::endian endian) const noexcept
+	[[nodiscard]] std::expected<T, ByteBuffer::Error> ByteBuffer::Peek(const std::endian endian) const noexcept
 	{
-		if (m_position + sizeof(T) > m_buffer.size()) {
+		if (m_position + sizeof(T) > m_buffer.size())
+		{
 			return std::unexpected(Error::InsufficientData);
 		}
 
@@ -77,7 +83,8 @@ namespace Nb::Common::Network
 		std::ranges::copy_n(m_buffer.begin() + m_position, sizeof(T), bytes.begin());
 
 		T value = std::bit_cast<T>(bytes);
-		if (endian != std::endian::native) {
+		if (endian != std::endian::native)
+		{
 			value = Byteswap(value);
 		}
 
@@ -87,9 +94,12 @@ namespace Nb::Common::Network
 	template<std::integral T>
 	[[nodiscard]] constexpr T ByteBuffer::Byteswap(T value) noexcept
 	{
-		if constexpr (sizeof(T) == 1) {
+		if constexpr (sizeof(T) == 1)
+		{
 			return value;
-		} else {
+		}
+		else
+		{
 			return std::byteswap(value);
 		}
 	}
@@ -100,16 +110,21 @@ namespace Nb::Common::Network
 		if constexpr (Index < sizeof...(Types)) {
 			using CurrentType = std::tuple_element_t<Index, std::tuple<Types...>>;
 
-			if constexpr (std::same_as<CurrentType, std::string>) {
+			if constexpr (std::same_as<CurrentType, std::string>)
+			{
 				auto value = ReadString();
-				if (!value) {
+				if (!value)
+				{
 					error = value.error();
 					return false;
 				}
 				std::get<Index>(result) = std::move(*value);
-			} else {
+			}
+			else
+			{
 				auto value = Read<CurrentType>(endian);
-				if (!value) {
+				if (!value)
+				{
 					error = value.error();
 					return false;
 				}

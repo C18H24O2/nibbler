@@ -1,4 +1,5 @@
 .xmake/
+.idea/
 .vs/
 .cache/
 build/

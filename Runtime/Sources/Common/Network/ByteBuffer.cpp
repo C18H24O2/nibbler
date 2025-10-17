@@ -5,17 +5,9 @@
 
 namespace Nb::Common::Network
 {
-	ByteBuffer::ByteBuffer()
-		: m_buffer{}
-		, m_position{0}
+	ByteBuffer::ByteBuffer(const std::size_t defaultSize)
 	{
-	}
-
-	ByteBuffer::ByteBuffer(std::size_t reserve_size)
-		: m_buffer{}
-		, m_position{0}
-	{
-		m_buffer.reserve(reserve_size);
+		m_buffer.reserve(defaultSize);
 	}
 
 	void ByteBuffer::WriteString(std::string_view str) noexcept
@@ -32,24 +24,26 @@ namespace Nb::Common::Network
 	std::expected<std::string, ByteBuffer::Error> ByteBuffer::ReadString() noexcept
 	{
 		auto length_result = Read<std::uint32_t>();
-		if (!length_result) {
+		if (!length_result)
+		{
 			return std::unexpected(length_result.error());
 		}
 
 		const auto length = *length_result;
-		if (m_position + length > m_buffer.size()) {
+		if (m_position + length > m_buffer.size())
+		{
 			return std::unexpected(Error::InsufficientData);
 		}
 
-		std::string result(m_buffer.begin() + m_position,
-						 m_buffer.begin() + m_position + length);
+		std::string result(m_buffer.begin() + m_position, m_buffer.begin() + m_position + length);
 		m_position += length;
 		return result;
 	}
 
-	std::expected<std::span<const std::uint8_t>, ByteBuffer::Error> ByteBuffer::ReadBytes(std::size_t count) noexcept
+	std::expected<std::span<const std::uint8_t>, ByteBuffer::Error> ByteBuffer::ReadBytes(const std::size_t count) noexcept
 	{
-		if (m_position + count > m_buffer.size()) {
+		if (m_position + count > m_buffer.size())
+		{
 			return std::unexpected(Error::InsufficientData);
 		}
 
@@ -94,17 +88,17 @@ namespace Nb::Common::Network
 		m_position = 0;
 	}
 
-	void ByteBuffer::Reserve(std::size_t capacity)
+	void ByteBuffer::Reserve(const std::size_t capacity)
 	{
 		m_buffer.reserve(capacity);
 	}
 
-	void ByteBuffer::Seek(std::size_t pos) noexcept
+	void ByteBuffer::Seek(const std::size_t pos) noexcept
 	{
 		m_position = std::min(pos, m_buffer.size());
 	}
 
-	void ByteBuffer::Skip(std::size_t bytes) noexcept
+	void ByteBuffer::Skip(const std::size_t bytes) noexcept
 	{
 		m_position = std::min(m_position + bytes, m_buffer.size());
 	}
@@ -132,7 +126,8 @@ namespace Nb::Common::Network
 
 	std::ostream& operator<<(std::ostream& os, const ByteBuffer::Error& error)
 	{
-		switch (error) {
+		switch (error)
+		{
 			case ByteBuffer::Error::InsufficientData:
 				os << "InsufficientData";
 				break;
@@ -152,12 +147,14 @@ namespace Nb::Common::Network
 	std::ostream& operator<<(std::ostream& os, const ByteBuffer& buffer)
 	{
 		os << "ByteBuffer{ ";
-		auto flags = os.flags();
-		auto fill = os.fill();
-		auto width = os.width();
+		const auto flags = os.flags();
+                const auto fill = os.fill();
+		const auto width = os.width();
 
-		for (auto it = buffer.m_buffer.begin(); it != buffer.m_buffer.end(); ++it) {
-			if (it == buffer.m_buffer.begin() + buffer.m_position) {
+		for (auto it = buffer.m_buffer.begin(); it != buffer.m_buffer.end(); ++it)
+		{
+			if (it == buffer.m_buffer.begin() + buffer.m_position)
+			{
 				os << "*";
 			}
 			os << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(*it) << " ";
@@ -169,4 +166,4 @@ namespace Nb::Common::Network
 		os.width(width);
 		return os;
 	}
-} // namespace Nb::Common::Network
+}

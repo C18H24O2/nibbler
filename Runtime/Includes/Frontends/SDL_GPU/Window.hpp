@@ -2,7 +2,7 @@
 #define NIBBLER_SDL_GPU_WINDOW_HPP
 
 #include <Common/Frontend/Frontend.hpp>
-#include <Common/Utils/NonCopyable.h>
+#include <Common/Utils/NonCopyable.hpp>
 #include <Frontends/SDL_GPU/CompilationProfile.hpp>
 
 #include <string_view>

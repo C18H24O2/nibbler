@@ -5,18 +5,17 @@
 #include <concepts>
 #include <cstdint>
 #include <expected>
-#include <iostream>
 #include <ostream>
 #include <span>
 #include <string>
 #include <string_view>
 #include <vector>
 
-#include <Common/Utils/NonCopyable.h>
+#include <Common/Utils/NonCopyable.hpp>
 
 namespace Nb::Common::Network
 {
-	class ByteBuffer : public Common::NonCopyable
+	class ByteBuffer : public NonCopyable
 	{
 		public:
 			enum class Error
@@ -27,9 +26,9 @@ namespace Nb::Common::Network
 			};
 
 		public:
-			ByteBuffer();
+			ByteBuffer() = default;
 			explicit ByteBuffer(std::size_t defaultSize);
-			virtual ~ByteBuffer() = default;
+			~ByteBuffer() override = default;
 
 		public:
 			template<std::integral T>
@@ -74,7 +73,7 @@ namespace Nb::Common::Network
 
 			[[nodiscard]] std::vector<std::uint8_t> Release() noexcept;
 
-			friend std::ostream& operator<<(std::ostream& os, const ByteBuffer::Error& error);
+			friend std::ostream& operator<<(std::ostream& os, const Error& error);
 			friend std::ostream& operator<<(std::ostream& os, const ByteBuffer& buffer);
 
 		private:
