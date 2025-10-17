@@ -8,13 +8,9 @@ build/
 *.exe
 *.lib
 *.exp
-Akel/BuildTime/Config.h
-Akel_Studio/settings/
-Akel_Studio/build/
-Akel_Studio/Akel_Studio.*
-Akel_Studio/Akel_Studio
-Akel_Studio/akelstudio_application.*
-Akel_Studio/akelstudio_application
-Akel_Studio/.akel_logs/
+*.so
+*.a
+*.o
+.direnv/
 .gdb_history
 compile_commands.json
