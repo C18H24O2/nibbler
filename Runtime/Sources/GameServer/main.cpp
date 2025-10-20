@@ -1,11 +1,12 @@
 #include <iostream>
+#include <thread>
 #include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
 
 #include <Common/Network/Server/SocketServer.hpp>
 
 static constexpr uint16_t DEFAULT_SERVER_PORT = 25565;
+
+using namespace std::chrono_literals;
 
 namespace Nb::GameServer
 {
@@ -21,15 +22,20 @@ namespace Nb::GameServer
 			return (1);
 		}
 
-		while (server.RunEventLoop())
+		while (server->RunEventLoop())
 		{
-			const auto result = server.AwaitEvent();
+			const auto target_time = std::chrono::steady_clock::now() + 50ms;
 
+			const auto result = server->TryAccept();
+			if (result)
+			{
+			}
+
+			std::this_thread::sleep_until(target_time);
 		}
 
 		return (0);
 	}
-
 }
 
 int main(const int argc, char** argv)
