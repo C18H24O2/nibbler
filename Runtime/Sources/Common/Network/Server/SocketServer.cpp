@@ -1,4 +1,4 @@
-#include <Common/Network/SocketServer.hpp>
+#include <Common/Network/Server/SocketServer.hpp>
 
 #include <arpa/inet.h>
 #include <cstring>
@@ -7,19 +7,29 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-namespace Nb::Common::Network
+namespace Nb::Network::Server
 {
 	SocketServer::SocketServer(std::uint16_t port) : port(port), fd(-1)
 	{
 	}
 
-	SocketServer::~SocketServer()
+	SocketServer::~SocketServer() noexcept
 	{
 		if (fd >= 0)
 		{
 			::close(fd);
 			fd = -1;
 		}
+	}
+
+	bool SocketServer::RunEventLoop() const noexcept
+	{
+		return this->running;
+	}
+
+	std::optional<Connection::Connection> SocketServer::TryAccept() noexcept
+	{
+		return {};
 	}
 
 	std::expected<SocketServer, SocketServer::Error> SocketServer::Create(std::uint16_t port) noexcept
@@ -54,32 +64,26 @@ namespace Nb::Common::Network
 		return std::move(server);
 	}
 
-	std::ostream& operator<<(std::ostream& os, const SocketServer::Error& error)
+	constexpr static std::string_view GetErrorString(const SocketServer::Error& error) noexcept
 	{
 		switch (error)
 		{
 			case SocketServer::Error::CreateFailed:
-				os << "Socket creation failed";
-				break;
+				return "Socket creation failed";
 			case SocketServer::Error::BindFailed:
-				os << "Socket bind failed";
-				break;
+				return "Socket bind failed";
 			case SocketServer::Error::ListenFailed:
-				os << "Socket listen failed";
-				break;
+				return "Socket listen failed";
 			case SocketServer::Error::AcceptFailed:
-				os << "Socket accept failed";
-				break;
-			case SocketServer::Error::ReadFailed:
-				os << "Socket read failed";
-				break;
-			case SocketServer::Error::WriteFailed:
-				os << "Socket write failed";
-				break;
+				return "Socket accept failed";
 			default:
-				os << "Unknown error";
-				break;
+				return "Unknown error";
 		}
+	}
+
+	std::ostream& operator<<(std::ostream& os, const SocketServer::Error& error)
+	{
+		os << GetErrorString(error);
 		return os;
 	}
 }

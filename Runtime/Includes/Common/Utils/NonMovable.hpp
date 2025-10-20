@@ -1,7 +1,7 @@
-#ifndef NIBBLER_COMMON_NON_COPYABLE_HPP
-#define NIBBLER_COMMON_NON_COPYABLE_HPP
+#ifndef NIBBLER_UTILS_NONMOVABLE_HPP
+#define NIBBLER_UTILS_NONMOVABLE_HPP
 
-namespace Nb::Common
+namespace Nb::Utils
 {
 	class NonMovable
 	{

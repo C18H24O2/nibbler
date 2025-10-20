@@ -11,10 +11,10 @@
 
 namespace Nb::SdlGpu
 {
-	class NB_SDL_GPU_API Window : public Common::NonCopyable
+	class NB_SDL_GPU_API Window : public Utils::NonCopyable
 	{
 		public:
-			~Window();
+			~Window() override;
 
 		private:
 			Window(std::uint32_t width, std::uint32_t height, std::string_view title);

@@ -13,9 +13,19 @@
 
 #include <Common/Utils/NonCopyable.hpp>
 
-namespace Nb::Common::Network
+namespace Nb::Network
 {
-	class ByteBuffer : public NonCopyable
+	class ByteBuffer;
+
+	template <typename T>
+	concept Serializable = requires(T obj, const T const_obj, ByteBuffer& buf)
+	{
+		typename T::Error;
+		{ const_obj.Serialize(buf) } -> std::same_as<void>;
+		{ T::Deserialize(buf) } -> std::same_as<std::expected<T, typename T::Error>>;
+	};
+
+	class ByteBuffer : public Utils::NonCopyable
 	{
 		public:
 			enum class Error
@@ -31,28 +41,38 @@ namespace Nb::Common::Network
 			~ByteBuffer() override = default;
 
 		public:
-			template<std::integral T>
+			template <std::integral T>
 			void Write(T value, std::endian endian = std::endian::big) noexcept;
 
-			template<std::floating_point T>
+			template <std::floating_point T>
 			void Write(T value, std::endian endian = std::endian::big) noexcept;
+
+			template <Serializable T>
+			void Write(const T& value) noexcept;
 
 			void WriteString(std::string_view str) noexcept;
 			void WriteBytes(std::span<const std::uint8_t> data) noexcept;
 
-			template<std::integral T>
+			template <typename... Types>
+			void WriteMultiple(const Types&... values) noexcept;
+
+			template <std::integral T>
 			[[nodiscard]] std::expected<T, Error> Read(std::endian endian = std::endian::big) noexcept;
 
-			template<std::floating_point T>
+			template <std::floating_point T>
 			[[nodiscard]] std::expected<T, Error> Read(std::endian endian = std::endian::big) noexcept;
+
+			template <Serializable T>
+			[[nodiscard]] std::expected<T, typename T::Error> Read() noexcept;
 
 			[[nodiscard]] std::expected<std::string, Error> ReadString() noexcept;
 			[[nodiscard]] std::expected<std::span<const std::uint8_t>, Error> ReadBytes(std::size_t count) noexcept;
 
-			template<typename... Types>
-			[[nodiscard]] std::expected<std::tuple<Types...>, Error> ReadMultiple(std::endian endian = std::endian::big) noexcept;
+			template <typename... Types>
+						[[nodiscard]] std::expected<std::tuple<Types...>, Error> ReadMultiple(
+							std::endian endian = std::endian::big) noexcept;
 
-			template<std::integral T>
+			template <std::integral T>
 			[[nodiscard]] std::expected<T, Error> Peek(std::endian endian = std::endian::big) const noexcept;
 
 			[[nodiscard]] std::size_t Size() const noexcept;
@@ -80,10 +100,10 @@ namespace Nb::Common::Network
 			std::vector<std::uint8_t> m_buffer;
 			std::size_t m_position{0};
 
-			template<std::integral T>
+			template <std::integral T>
 			[[nodiscard]] static constexpr T Byteswap(T value) noexcept;
 
-			template<std::size_t Index, typename... Types>
+			template <std::size_t Index, typename... Types>
 			bool ReadMultipleImpl(std::tuple<Types...>& result, Error& error, std::endian endian) noexcept;
 	};
 }

@@ -3,9 +3,9 @@
 
 #include <Common/Network/ByteBuffer.hpp>
 
-namespace Nb::Common::Network
+namespace Nb::Network
 {
-	template<std::integral T>
+	template <std::integral T>
 	void ByteBuffer::Write(T value, const std::endian endian) noexcept
 	{
 		if (endian != std::endian::native)
@@ -14,16 +14,29 @@ namespace Nb::Common::Network
 		}
 
 		const auto bytes = std::bit_cast<std::array<std::uint8_t, sizeof(T)>>(value);
-		m_buffer.append_range(bytes);
+		m_buffer.insert(m_buffer.end(), bytes.begin(), bytes.end());
 	}
 
-	template<std::floating_point T>
+	template <std::floating_point T>
 	void ByteBuffer::Write(T value, std::endian endian) noexcept
 	{
 		using IntType = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>;
 		Write(std::bit_cast<IntType>(value), endian);
 	}
-	template<std::integral T>
+
+	template <Serializable T>
+	void ByteBuffer::Write(const T& value) noexcept
+	{
+		value.Serialize(*this);
+	}
+
+	template <typename... Types>
+	void ByteBuffer::WriteMultiple(const Types&... values) noexcept
+	{
+		(Write(values), ...);
+	}
+
+	template <std::integral T>
 	[[nodiscard]] std::expected<T, ByteBuffer::Error> ByteBuffer::Read(const std::endian endian) noexcept
 	{
 		if (m_position + sizeof(T) > m_buffer.size())
@@ -44,7 +57,7 @@ namespace Nb::Common::Network
 		return value;
 	}
 
-	template<std::floating_point T>
+	template <std::floating_point T>
 	[[nodiscard]] std::expected<T, ByteBuffer::Error> ByteBuffer::Read(std::endian endian) noexcept
 	{
 		using IntType = std::conditional_t<sizeof(T) == 4, std::uint32_t, std::uint64_t>;
@@ -58,12 +71,19 @@ namespace Nb::Common::Network
 		return std::bit_cast<T>(*int_result);
 	}
 
-	template<typename... Types>
-	[[nodiscard]] std::expected<std::tuple<Types...>, ByteBuffer::Error> ByteBuffer::ReadMultiple(std::endian endian) noexcept
+	template <Serializable T>
+	[[nodiscard]] std::expected<T, typename T::Error> ByteBuffer::Read() noexcept
+	{
+		return T::Deserialize(*this);
+	}
+
+	template <typename... Types>
+	[[nodiscard]] std::expected<std::tuple<Types...>, ByteBuffer::Error> ByteBuffer::ReadMultiple(
+		std::endian endian) noexcept
 	{
 		std::tuple<Types...> result;
 		Error error;
-                const bool success = ReadMultipleImpl<0, Types...>(result, error, endian);
+		const bool success = ReadMultipleImpl<0, Types...>(result, error, endian);
 		if (!success)
 		{
 			return std::unexpected(error);
@@ -71,7 +91,7 @@ namespace Nb::Common::Network
 		return result;
 	}
 
-	template<std::integral T>
+	template <std::integral T>
 	[[nodiscard]] std::expected<T, ByteBuffer::Error> ByteBuffer::Peek(const std::endian endian) const noexcept
 	{
 		if (m_position + sizeof(T) > m_buffer.size())
@@ -91,7 +111,7 @@ namespace Nb::Common::Network
 		return value;
 	}
 
-	template<std::integral T>
+	template <std::integral T>
 	[[nodiscard]] constexpr T ByteBuffer::Byteswap(T value) noexcept
 	{
 		if constexpr (sizeof(T) == 1)
@@ -104,10 +124,11 @@ namespace Nb::Common::Network
 		}
 	}
 
-	template<std::size_t Index, typename... Types>
+	template <std::size_t Index, typename... Types>
 	bool ByteBuffer::ReadMultipleImpl(std::tuple<Types...>& result, Error& error, std::endian endian) noexcept
 	{
-		if constexpr (Index < sizeof...(Types)) {
+		if constexpr (Index < sizeof...(Types))
+		{
 			using CurrentType = std::tuple_element_t<Index, std::tuple<Types...>>;
 
 			if constexpr (std::same_as<CurrentType, std::string>)
@@ -116,6 +137,16 @@ namespace Nb::Common::Network
 				if (!value)
 				{
 					error = value.error();
+					return false;
+				}
+				std::get<Index>(result) = std::move(*value);
+			}
+			else if constexpr (Serializable<CurrentType>)
+			{
+				auto value = Read<CurrentType>();
+				if (!value)
+				{
+					error = Error::InsufficientData;
 					return false;
 				}
 				std::get<Index>(result) = std::move(*value);

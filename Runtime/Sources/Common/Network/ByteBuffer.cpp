@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iomanip>
 
-namespace Nb::Common::Network
+namespace Nb::Network
 {
 	ByteBuffer::ByteBuffer(const std::size_t defaultSize)
 	{
