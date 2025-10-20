@@ -3,6 +3,8 @@ add_repositories("local-repo Xmake")
 set_version("0.0.1beta")
 
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
+add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})
+
 set_allowedplats("windows", "mingw", "linux", "macosx")
 set_allowedmodes("debug", "release")
 set_defaultmode("release")
@@ -123,6 +125,7 @@ end
 
 target("nibbler_server")
 	set_kind("binary")
+	set_default(false)
 
 	if has_config("unitybuild") then
 		add_rules("c++.unity_build", { batchsize = 6 })
@@ -169,4 +172,29 @@ target("nibbler")
 			add_deps("nibbler_" .. name:lower())
 		end
 	end
+target_end()
+
+add_requires("catch2")
+
+target("nibbler_tests")
+    set_kind("binary")
+	set_default(false)
+
+	if has_config("unitybuild") then
+		add_rules("c++.unity_build", { batchsize = 6 })
+	end
+
+    add_packages("catch2")
+
+    add_defines("NB_TESTS_BUILD")
+    if is_mode("debug") then
+        add_defines("NB_TESTS_DEBUG")
+    end
+
+    add_includedirs("Runtime/Includes")
+
+    add_files("Tests/Sources/**.cpp")
+	add_files("Runtime/Sources/Common/**.cpp")
+
+    add_tests("default")
 target_end()
