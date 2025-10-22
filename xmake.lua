@@ -42,7 +42,16 @@ local frontends = {
 	},
 	SDL_GPU = {
 		option = "sdlgpu",
-		packages = { "libsdl3" },
+		custom_root = function()
+			if linuxos.name() == "nixos" then -- package name differs on Nix
+				add_requires("nix::sdl3", { alias = "sdl3" })
+			else
+				add_requires("libsdl3", { alias = "sdl3" })
+			end
+		end,
+		custom = function()
+			add_packages("sdl3")
+		end
 	},
 	Raylib = {
 	}
@@ -66,7 +75,12 @@ for name, module in pairs(frontends) do
 	if module.option then
 		option(module.option, { description = "Enables the " .. name .. " frontend", default = true })
 		if has_config(module.option) then
-			add_requires(table.unpack(module.packages))
+			if module.packages then
+				add_requires(table.unpack(module.packages))
+			end
+			if module.custom_root then
+				module.custom_root()
+			end
 		end
 	end
 end
