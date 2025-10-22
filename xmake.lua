@@ -1,6 +1,6 @@
 add_repositories("local-repo Xmake")
 
-set_version("0.0.1beta")
+set_version("0.0.1-beta.1")
 
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
 add_rules("plugin.compile_commands.autoupdate", {outputdir = "."})

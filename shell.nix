@@ -20,5 +20,6 @@ in
     glfw
     xorg.libXinerama.dev
     xorg.libXi.dev
+    catch2_3
   ];
 }

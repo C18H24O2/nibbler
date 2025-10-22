@@ -13,12 +13,12 @@ namespace Nb::Network
 	void ByteBuffer::WriteString(std::string_view str) noexcept
 	{
 		Write(static_cast<std::uint32_t>(str.size()));
-		m_buffer.append_range(str);
+		m_buffer.insert(m_buffer.end(), str.begin(), str.end());
 	}
 
 	void ByteBuffer::WriteBytes(std::span<const std::uint8_t> data) noexcept
 	{
-		m_buffer.append_range(data);
+		m_buffer.insert(m_buffer.end(), data.begin(), data.end());
 	}
 
 	std::expected<std::string, ByteBuffer::Error> ByteBuffer::ReadString() noexcept
