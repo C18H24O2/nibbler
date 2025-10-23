@@ -5,8 +5,14 @@
 
 namespace Nb::Network
 {
-	ByteBuffer::ByteBuffer(const std::size_t defaultSize)
+	ByteBuffer::ByteBuffer(const std::endian endianness)
 	{
+		m_endian = endianness;
+	}
+
+	ByteBuffer::ByteBuffer(const std::size_t defaultSize, const std::endian endianness)
+	{
+		m_endian = endianness;
 		m_buffer.reserve(defaultSize);
 	}
 

@@ -2,17 +2,13 @@
 #define NIBBLER_NETWORK_SERIALIZER_VARINT_HPP
 
 #include <cstdint>
+
 #include <Common/Network/ByteBuffer.hpp>
 
 namespace Nb::Network::Serializers
 {
-	struct VarInt
-	{
-		using Error = ByteBuffer::Error;
-		using ValueType = std::int32_t;
-
-		static void
-	};
+	DEFINE_SERIALIZER(VarInt, std::int32_t);
+	DEFINE_SERIALIZER(VarLong, std::int64_t);
 }
 
 #endif

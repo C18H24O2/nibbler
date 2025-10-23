@@ -9,71 +9,83 @@
 #include <span>
 #include <string>
 #include <string_view>
+#include <type_traits>
 #include <vector>
 
 #include <Common/Utils/NonCopyable.hpp>
 
+#define DEFINE_SERIALIZER(name, type) \
+	struct name \
+	{ \
+		using ValueType = type; \
+		static void Serialize(ByteBuffer& buffer, const ValueType& value) noexcept; \
+		static std::expected<ValueType, ByteBufferError> Deserialize(ByteBuffer& buffer) noexcept; \
+	}
+
 namespace Nb::Network
 {
+	enum class ByteBufferError
+	{
+		InsufficientData,
+		BufferOverflow,
+		InvalidStringLength,
+		ValueTooLarge,
+	};
+
 	class ByteBuffer;
 
-	template <typename T>
-	concept Serializable = requires(T obj, const T const_obj, ByteBuffer& buf)
+	template <typename S>
+	concept Serializable = requires(ByteBuffer& buffer, const typename S::ValueType& value)
 	{
-		typename T::Error;
-		{ const_obj.Serialize(buf) } -> std::same_as<void>;
-		{ T::Deserialize(buf) } -> std::same_as<std::expected<T, typename T::Error>>;
+		typename S::ValueType;
+		{ S::Serialize(buffer, value) } -> std::same_as<void>;
+		{ S::Deserialize(buffer) } -> std::same_as<std::expected<typename S::ValueType, ByteBufferError>>;
 	};
+
+	template <typename T>
+	concept Primitive = std::is_arithmetic_v<T>;
+
+	template <typename T>
+	concept SerializableOrPrimitive = Serializable<T> || Primitive<T>;
+
+	template<typename T>
+	concept HasValueType = requires { typename T::ValueType; };
+
+	template<SerializableOrPrimitive T>
+	using SerializableValueType = std::conditional_t<HasValueType<T>, typename T::ValueType, T>;
 
 	class ByteBuffer : public Utils::NonCopyable
 	{
-		public:
-			enum class Error
-			{
-				InsufficientData,
-				BufferOverflow,
-				InvalidStringLength
-			};
+		using Error = ByteBufferError;
 
 		public:
-			ByteBuffer() = default;
-			explicit ByteBuffer(std::size_t defaultSize);
+			explicit ByteBuffer(std::endian endianness = std::endian::big);
+			explicit ByteBuffer(std::size_t defaultSize, std::endian endianness = std::endian::big);
 			~ByteBuffer() override = default;
 
 		public:
-			template <std::integral T>
-			void Write(T value, std::endian endian = std::endian::big) noexcept;
-
-			template <std::floating_point T>
-			void Write(T value, std::endian endian = std::endian::big) noexcept;
-
-			template <Serializable T>
-			void Write(const T& value) noexcept;
+			template <SerializableOrPrimitive T>
+			void Write(const SerializableValueType<T>& value) noexcept;
 
 			void WriteString(std::string_view str) noexcept;
 			void WriteBytes(std::span<const std::uint8_t> data) noexcept;
 
-			template <typename... Types>
-			void WriteMultiple(const Types&... values) noexcept;
+			template <SerializableOrPrimitive... Types>
+			void WriteMultiple(const SerializableValueType<Types>&... values) noexcept;
 
-			template <std::integral T>
-			[[nodiscard]] std::expected<T, Error> Read(std::endian endian = std::endian::big) noexcept;
-
-			template <std::floating_point T>
-			[[nodiscard]] std::expected<T, Error> Read(std::endian endian = std::endian::big) noexcept;
-
-			template <Serializable T>
-			[[nodiscard]] std::expected<T, typename T::Error> Read() noexcept;
+		public:
+			template <SerializableOrPrimitive T>
+			[[nodiscard]] std::expected<SerializableValueType<T>, Error> Read() noexcept;
 
 			[[nodiscard]] std::expected<std::string, Error> ReadString() noexcept;
 			[[nodiscard]] std::expected<std::span<const std::uint8_t>, Error> ReadBytes(std::size_t count) noexcept;
 
-			template <typename... Types>
-						[[nodiscard]] std::expected<std::tuple<Types...>, Error> ReadMultiple(
-							std::endian endian = std::endian::big) noexcept;
+			// template <typename... Types>
+			// [[nodiscard]] auto ReadMultiple() noexcept -> std::expected<std::tuple<SerializableValueType<Types>...>, Error>;
 
-			template <std::integral T>
-			[[nodiscard]] std::expected<T, Error> Peek(std::endian endian = std::endian::big) const noexcept;
+		public:
+			// template <std::integral T>
+			// [[nodiscard]] std::expected<T, Error> Peek() const noexcept;
 
 			[[nodiscard]] std::size_t Size() const noexcept;
 			[[nodiscard]] std::size_t Position() const noexcept;
@@ -97,14 +109,15 @@ namespace Nb::Network
 			friend std::ostream& operator<<(std::ostream& os, const ByteBuffer& buffer);
 
 		private:
-			std::vector<std::uint8_t> m_buffer;
+			std::endian m_endian{std::endian::big};
 			std::size_t m_position{0};
+			std::vector<std::uint8_t> m_buffer;
 
 			template <std::integral T>
 			[[nodiscard]] static constexpr T Byteswap(T value) noexcept;
 
-			template <std::size_t Index, typename... Types>
-			bool ReadMultipleImpl(std::tuple<Types...>& result, Error& error, std::endian endian) noexcept;
+			// template <std::size_t Index, typename... Types>
+			// bool ReadMultipleImpl(std::tuple<Types...>& result, Error& error, std::endian endian) noexcept;
 	};
 }
 

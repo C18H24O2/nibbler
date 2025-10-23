@@ -3,12 +3,22 @@
 
 #include <chrono>
 #include <expected>
+#include <tuple>
 
 #include <Common/Utils/NonCopyable.hpp>
 #include <netinet/in.h>
 
 namespace Nb::Network::Connection
 {
+	template<typename T>
+	concept Packet = requires(T t)
+	{
+		t.Fields();
+		requires requires { 
+			std::apply([](auto&&...) {}, t.fields()); 
+		};
+	};
+
 	class Connection : Utils::NonCopyable
 	{
 		public:
