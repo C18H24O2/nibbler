@@ -10,9 +10,6 @@ TEST_CASE("ByteBuffer Write and Read Multiple", "[ByteBuffer]")
 {
 	ByteBuffer buffer;
 
-	std::cerr << "ByteBuffer Write and Read Multiple" << std::endl;
-	REQUIRE(true);
-
 	// buffer.WriteMultiple(std::uint8_t{1}, std::uint16_t{2}, std::uint32_t{3});
 
 	// REQUIRE(buffer.Size() == (1 + 2 + 4));
@@ -33,8 +30,6 @@ TEST_CASE("ByteBuffer Insufficient Data", "[ByteBuffer]")
 {
 	ByteBuffer buffer;
 
-	std::cerr << "ByteBuffer Insufficient Data" << std::endl;
-	REQUIRE(true);
 	// buffer.WriteMultiple(std::uint8_t{1}, std::uint16_t{2});
 
 	// auto result = buffer.ReadMultiple<std::uint8_t, std::uint16_t, std::uint32_t>();
@@ -45,8 +40,6 @@ TEST_CASE("ByteBuffer Insufficient Data", "[ByteBuffer]")
 TEST_CASE("ByteBuffer Empty Data", "[ByteBuffer]")
 {
 	ByteBuffer buffer;
-
-	std::cerr << "ByteBuffer Empty Data" << std::endl;
 
 	REQUIRE(buffer.Empty());
 	REQUIRE(buffer.Size() == 0);
@@ -67,8 +60,6 @@ TEST_CASE("ByteBuffer Serialize String", "[ByteBuffer]")
 {
 	ByteBuffer buffer;
 
-	std::cerr << "ByteBuffer Serialize String" << std::endl;
-
 	const std::string testString = "Hello, ByteBuffer!";
 	buffer.WriteString(testString);
 
@@ -83,8 +74,6 @@ TEST_CASE("ByteBuffer Serialize String", "[ByteBuffer]")
 TEST_CASE("ByteBuffer Write and Read Bytes", "[ByteBuffer]")
 {
 	ByteBuffer buffer;
-
-	std::cerr << "ByteBuffer Write and Read Bytes" << std::endl;
 
 	const std::vector<std::uint8_t> testData = {0x01, 0x02, 0x03, 0x04, 0x05};
 	buffer.WriteBytes(testData);

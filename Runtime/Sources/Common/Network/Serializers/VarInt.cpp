@@ -16,8 +16,6 @@ namespace Nb::Network::Serializers
 
 		while (true)
 		{
-			std::cout << "ReadVarIntegral" << std::endl;
-			
 			auto result = buffer.Read<std::int8_t>();
 			if (!result.has_value())
 			{

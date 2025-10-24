@@ -9,42 +9,67 @@ using namespace Nb::Network::Serializers;
 
 TEST_CASE("VarInt Write and Read", "[VarInt]")
 {
-	std::cerr << "VarInt Write and Read" << std::endl;
-
 	ByteBuffer buffer;
+	auto nums = std::vector<std::int32_t>{0, 1, 2, 127, 128, 255, 25565, 2097151, std::numeric_limits<std::int32_t>::max(), -1, std::numeric_limits<std::int32_t>::min()};
 
-	buffer.Write<VarInt>(std::int32_t{1});
-	buffer.Write<VarInt>(std::int32_t{25565});
-	buffer.Write<VarInt>(std::int32_t{-1});
-	buffer.Write<VarInt>(std::int32_t{42069});
+	for (auto i : nums)
+	{
+		buffer.Write<VarInt>(i);
+	}
 
-	std::cerr << buffer << std::endl;
+	std::stringstream ss;
+	ss << buffer;
+	REQUIRE(ss.str() == "ByteBuffer{ *00 01 02 7f 80 01 ff 01 dd c7 01 ff ff 7f ff ff ff ff 07 ff ff ff ff 0f 80 80 80 80 08 }");
 
 	buffer.Seek(0);
-	// auto result = buffer.ReadMultiple<VarInt>();
-	// 
-	// REQUIRE(result.has_value());
-	// auto [a, b, c, d] = *result;
-	// REQUIRE(a == std::int32_t{1});
-	// REQUIRE(b == std::int32_t{25565});
-	// REQUIRE(c == std::int32_t{-1});
-	// REQUIRE(d == std::int32_t{42069});
+
+	for (auto i : nums)
+	{
+		auto result = buffer.Read<VarInt>();
+		REQUIRE(result.has_value());
+		REQUIRE(*result == i);
+	}
+	auto result = buffer.Read<VarInt>();
+	REQUIRE(!result.has_value());
+	REQUIRE(result.error() == ByteBufferError::InsufficientData);
 }
 
 TEST_CASE("VarLong Write and Read", "[VarInt]")
 {
-	std::cerr << "VarLong Write and Read" << std::endl;
-	// Nb::Network::ByteBuffer buffer;
-	//
-	// buffer.WriteMultiple<VarLong, VarLong, VarLong, VarLong>(std::int64_t{1}, std::int64_t{25565}, std::int64_t{-3}, std::int64_t{42069});
-	//
-	// buffer.Seek(0);
-	// auto result = buffer.ReadMultiple<VarLong>();
-	// 
-	// REQUIRE(result.has_value());
-	// auto [a, b, c, d] = *result;
-	// REQUIRE(a == std::int64_t{1});
-	// REQUIRE(b == std::int64_t{25565});
-	// REQUIRE(c == std::int64_t{-3});
-	// REQUIRE(d == std::int64_t{42069});
+	ByteBuffer buffer;
+	auto nums = std::vector<std::int64_t>{0, 1, 2, 127, 128, 255, 25565, 2097151, std::numeric_limits<std::int32_t>::max(), std::numeric_limits<std::int64_t>::max(), -1, std::numeric_limits<std::int32_t>::min(), std::numeric_limits<std::int64_t>::min()};
+
+	for (auto i : nums)
+	{
+		buffer.Write<VarLong>(i);
+	}
+
+	std::stringstream ss;
+	ss << buffer;
+	REQUIRE(ss.str() == "ByteBuffer{ *00 01 02 7f 80 01 ff 01 dd c7 01 ff ff 7f ff ff ff ff 07 ff ff ff ff ff ff ff ff 7f ff ff ff ff ff ff ff ff ff 01 80 80 80 80 f8 ff ff ff ff 01 80 80 80 80 80 80 80 80 80 01 }");
+
+	buffer.Seek(0);
+	for (auto i : nums)
+	{
+		auto result = buffer.Read<VarLong>();
+		REQUIRE(result.has_value());
+		REQUIRE(*result == i);
+	}
+	auto result = buffer.Read<VarLong>();
+	REQUIRE(!result.has_value());
+	REQUIRE(result.error() == ByteBufferError::InsufficientData);
+}
+
+TEST_CASE("VarInt Read Valid Unoptimized Data", "[VarInt]")
+{
+	ByteBuffer buffer;
+
+	buffer.WriteBytes(std::array<std::uint8_t, 3>{0x81, 0x80, 0x00});
+
+	buffer.Seek(0);
+	auto result = buffer.Read<VarInt>();
+	REQUIRE(result.has_value());
+	REQUIRE(*result == 1);
+
+	REQUIRE(!buffer.HasRemaining());
 }
