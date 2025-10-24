@@ -27,7 +27,7 @@ namespace Nb::Network
 		m_buffer.insert(m_buffer.end(), data.begin(), data.end());
 	}
 
-	std::expected<std::string, ByteBuffer::Error> ByteBuffer::ReadString() noexcept
+	std::expected<std::string, ByteBufferError> ByteBuffer::ReadString() noexcept
 	{
 		auto length_result = Read<std::uint32_t>();
 		if (!length_result)
@@ -38,7 +38,7 @@ namespace Nb::Network
 		const auto length = *length_result;
 		if (m_position + length > m_buffer.size())
 		{
-			return std::unexpected(Error::InsufficientData);
+			return std::unexpected(ByteBufferError::InsufficientData);
 		}
 
 		std::string result(m_buffer.begin() + m_position, m_buffer.begin() + m_position + length);
@@ -46,11 +46,11 @@ namespace Nb::Network
 		return result;
 	}
 
-	std::expected<std::span<const std::uint8_t>, ByteBuffer::Error> ByteBuffer::ReadBytes(const std::size_t count) noexcept
+	std::expected<std::span<const std::uint8_t>, ByteBufferError> ByteBuffer::ReadBytes(const std::size_t count) noexcept
 	{
 		if (m_position + count > m_buffer.size())
 		{
-			return std::unexpected(Error::InsufficientData);
+			return std::unexpected(ByteBufferError::InsufficientData);
 		}
 
 		auto result = std::span{m_buffer}.subspan(m_position, count);
@@ -130,17 +130,17 @@ namespace Nb::Network
 		return std::move(m_buffer);
 	}
 
-	std::ostream& operator<<(std::ostream& os, const ByteBuffer::Error& error)
+	std::ostream& operator<<(std::ostream& os, const ByteBufferError& error)
 	{
 		switch (error)
 		{
-			case ByteBuffer::Error::InsufficientData:
+			case ByteBufferError::InsufficientData:
 				os << "InsufficientData";
 				break;
-			case ByteBuffer::Error::BufferOverflow:
+			case ByteBufferError::BufferOverflow:
 				os << "BufferOverflow";
 				break;
-			case ByteBuffer::Error::InvalidStringLength:
+			case ByteBufferError::InvalidStringLength:
 				os << "InvalidStringLength";
 				break;
 			default:

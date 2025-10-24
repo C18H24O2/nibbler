@@ -1,5 +1,7 @@
 #include <Common/Network/Serializers/VarInt.hpp>
 
+#include <iostream>
+
 namespace Nb::Network::Serializers
 {
 	constexpr static auto SEGMENT_BITS = 0x7F;
@@ -14,6 +16,8 @@ namespace Nb::Network::Serializers
 
 		while (true)
 		{
+			std::cout << "ReadVarIntegral" << std::endl;
+			
 			auto result = buffer.Read<std::int8_t>();
 			if (!result.has_value())
 			{
@@ -37,11 +41,14 @@ namespace Nb::Network::Serializers
 	}
 
 	template <std::integral T>
-	constexpr static void WriteVarIntegral(ByteBuffer& buffer, T& value) noexcept
+	constexpr static void WriteVarIntegral(ByteBuffer& buffer, const T& _value) noexcept
 	{
+		using UnsignedType = std::make_unsigned_t<T>;
+
+		UnsignedType value = std::bit_cast<UnsignedType>(_value);
 		while (true)
 		{
-			if ((value & ~((T) SEGMENT_BITS)) == 0)
+			if ((value & ~((UnsignedType) SEGMENT_BITS)) == 0)
 			{
 				buffer.Write(std::uint8_t(value));
 				break;
@@ -53,8 +60,8 @@ namespace Nb::Network::Serializers
 	}
 
 	void VarInt::Serialize(ByteBuffer& buffer, const VarInt::ValueType& value) noexcept { WriteVarIntegral<VarInt::ValueType>(buffer, value); }
-	std::expected<VarInt::ValueType, VarInt::Error> VarInt::Deserialize(ByteBuffer& buffer) noexcept { return ReadVarIntegral<VarInt::ValueType, 31, VarInt::Error>(buffer); }
+	std::expected<VarInt::ValueType, ByteBufferError> VarInt::Deserialize(ByteBuffer& buffer) noexcept { return ReadVarIntegral<VarInt::ValueType, 31, ByteBufferError>(buffer); }
 
 	void VarLong::Serialize(ByteBuffer& buffer, const VarLong::ValueType& value) noexcept { WriteVarIntegral<VarLong::ValueType>(buffer, value); }
-	std::expected<VarLong::ValueType, VarLong::Error> VarLong::Deserialize(ByteBuffer& buffer) noexcept { return ReadVarIntegral<VarLong::ValueType, 63, VarLong::Error>(buffer); }
+	std::expected<VarLong::ValueType, ByteBufferError> VarLong::Deserialize(ByteBuffer& buffer) noexcept { return ReadVarIntegral<VarLong::ValueType, 63, ByteBufferError>(buffer); }
 }

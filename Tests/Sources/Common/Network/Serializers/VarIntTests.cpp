@@ -2,20 +2,23 @@
 
 #include <Common/Network/Serializers/VarInt.hpp>
 
+using namespace Nb::Network;
 using namespace Nb::Network::Serializers;
 
 #include <iostream>
 
 TEST_CASE("VarInt Write and Read", "[VarInt]")
 {
-	Nb::Network::ByteBuffer buffer;
+	std::cerr << "VarInt Write and Read" << std::endl;
+
+	ByteBuffer buffer;
 
 	buffer.Write<VarInt>(std::int32_t{1});
 	buffer.Write<VarInt>(std::int32_t{25565});
-	buffer.Write<VarInt>(std::int32_t{-3});
+	buffer.Write<VarInt>(std::int32_t{-1});
 	buffer.Write<VarInt>(std::int32_t{42069});
 
-	std::cout << buffer << std::endl;
+	std::cerr << buffer << std::endl;
 
 	buffer.Seek(0);
 	// auto result = buffer.ReadMultiple<VarInt>();
@@ -24,12 +27,13 @@ TEST_CASE("VarInt Write and Read", "[VarInt]")
 	// auto [a, b, c, d] = *result;
 	// REQUIRE(a == std::int32_t{1});
 	// REQUIRE(b == std::int32_t{25565});
-	// REQUIRE(c == std::int32_t{-3});
+	// REQUIRE(c == std::int32_t{-1});
 	// REQUIRE(d == std::int32_t{42069});
 }
 
 TEST_CASE("VarLong Write and Read", "[VarInt]")
 {
+	std::cerr << "VarLong Write and Read" << std::endl;
 	// Nb::Network::ByteBuffer buffer;
 	//
 	// buffer.WriteMultiple<VarLong, VarLong, VarLong, VarLong>(std::int64_t{1}, std::int64_t{25565}, std::int64_t{-3}, std::int64_t{42069});

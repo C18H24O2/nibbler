@@ -85,6 +85,10 @@ for name, module in pairs(frontends) do
 	end
 end
 
+if is_mode("debug") then
+	add_cxxflags("-ftemplate-backtrace-limit=0", "-fdiagnostics-show-template-tree")
+end
+
 for name, module in pairs(frontends) do
 	if module.option and not has_config(module.option) then
 		goto continue

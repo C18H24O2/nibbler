@@ -5,33 +5,33 @@
 
 namespace Nb::Network
 {
-	template <SerializableOrPrimitive T>
-	void ByteBuffer::Write(const SerializableValueType<T>& value) noexcept
+	template <Primitive T>
+	void ByteBuffer::Write(const T _value) noexcept
 	{
-		if constexpr (std::is_arithmetic_v<T>)
+		T value = _value;
+		if (m_endian != std::endian::native)
 		{
-			if (m_endian != std::endian::native)
-			{
-				value = Byteswap(value);
-			}
+			value = Byteswap(value);
+		}
 
-			const auto bytes = std::bit_cast<std::array<std::uint8_t, sizeof(T)>>(value);
-			m_buffer.insert(m_buffer.end(), bytes.begin(), bytes.end());
-		}
-		else
-		{
-			T::Serialize(*this, value);
-		}
+		const auto bytes = std::bit_cast<std::array<std::uint8_t, sizeof(T)>>(value);
+		m_buffer.insert(m_buffer.end(), bytes.begin(), bytes.end());
 	}
 
-	template <SerializableOrPrimitive T>
-	[[nodiscard]] std::expected<SerializableValueType<T>, ByteBuffer::Error> ByteBuffer::Read() noexcept
+	template <Serializable T>
+	void ByteBuffer::Write(const typename T::ValueType& value) noexcept
+	{
+		T::Serialize(*this, value);
+	}
+
+	template <Primitive T>
+	[[nodiscard]] std::expected<T, ByteBufferError> ByteBuffer::Read() noexcept
 	{
 		if constexpr (std::is_integral_v<T>)
 		{
 			if (m_position + sizeof(T) > m_buffer.size())
 			{
-				return std::unexpected(Error::InsufficientData);
+				return std::unexpected(ByteBufferError::InsufficientData);
 			}
 
 			std::array<std::uint8_t, sizeof(T)> bytes;
@@ -58,18 +58,20 @@ namespace Nb::Network
 
 			return std::bit_cast<T>(*int_result);
 		}
-		else
-		{
-			return T::Deserialize(*this);
-		}
+	}
+
+	template <Serializable T>
+	[[nodiscard]] std::expected<typename T::ValueType, ByteBufferError> ByteBuffer::Read() noexcept
+	{
+		return T::Deserialize(*this);
 	}
 
 	// template <typename... Types>
-	// [[nodiscard]] std::expected<std::tuple<Types...>, ByteBuffer::Error> ByteBuffer::ReadMultiple(
+	// [[nodiscard]] std::expected<std::tuple<Types...>, ByteBufferError> ByteBuffer::ReadMultiple(
 	// 	std::endian endian) noexcept
 	// {
 	// 	std::tuple<Types...> result;
-	// 	Error error;
+	// 	ByteBufferError error;
 	// 	const bool success = ReadMultipleImpl<0, Types...>(result, error, endian);
 	// 	if (!success)
 	// 	{
@@ -79,11 +81,11 @@ namespace Nb::Network
 	// }
 
 	// template <std::integral T>
-	// [[nodiscard]] std::expected<T, ByteBuffer::Error> ByteBuffer::Peek(const std::endian endian) const noexcept
+	// [[nodiscard]] std::expected<T, ByteBufferError> ByteBuffer::Peek(const std::endian endian) const noexcept
 	// {
 	// 	if (m_position + sizeof(T) > m_buffer.size())
 	// 	{
-	// 		return std::unexpected(Error::InsufficientData);
+	// 		return std::unexpected(ByteBufferError::InsufficientData);
 	// 	}
 	//
 	// 	std::array<std::uint8_t, sizeof(T)> bytes;

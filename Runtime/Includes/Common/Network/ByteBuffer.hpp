@@ -51,34 +51,50 @@ namespace Nb::Network
 	template<typename T>
 	concept HasValueType = requires { typename T::ValueType; };
 
+	template<typename T>
+	struct ValueTypeExtractor
+	{
+		using Type = T;
+	};
+
+	template<typename T> requires HasValueType<T>
+	struct ValueTypeExtractor<T>
+	{
+		using Type = typename T::ValueType;
+	};
+
 	template<SerializableOrPrimitive T>
-	using SerializableValueType = std::conditional_t<HasValueType<T>, typename T::ValueType, T>;
+	using SerializableValueType = typename ValueTypeExtractor<T>::Type;
 
 	class ByteBuffer : public Utils::NonCopyable
 	{
-		using Error = ByteBufferError;
-
 		public:
 			explicit ByteBuffer(std::endian endianness = std::endian::big);
 			explicit ByteBuffer(std::size_t defaultSize, std::endian endianness = std::endian::big);
 			~ByteBuffer() override = default;
 
 		public:
-			template <SerializableOrPrimitive T>
-			void Write(const SerializableValueType<T>& value) noexcept;
+			template <Primitive T>
+			void Write(const T value) noexcept;
+
+			template <Serializable T>
+			void Write(const typename T::ValueType& value) noexcept;
 
 			void WriteString(std::string_view str) noexcept;
 			void WriteBytes(std::span<const std::uint8_t> data) noexcept;
 
-			template <SerializableOrPrimitive... Types>
-			void WriteMultiple(const SerializableValueType<Types>&... values) noexcept;
+			// template <SerializableOrPrimitive... Types>
+			// void WriteMultiple(const SerializableValueType<Types>&... values) noexcept;
 
 		public:
-			template <SerializableOrPrimitive T>
-			[[nodiscard]] std::expected<SerializableValueType<T>, Error> Read() noexcept;
+			template <Primitive T>
+			[[nodiscard]] std::expected<T, ByteBufferError> Read() noexcept;
+			
+			template <Serializable T>
+			[[nodiscard]] std::expected<typename T::ValueType, ByteBufferError> Read() noexcept;
 
-			[[nodiscard]] std::expected<std::string, Error> ReadString() noexcept;
-			[[nodiscard]] std::expected<std::span<const std::uint8_t>, Error> ReadBytes(std::size_t count) noexcept;
+			[[nodiscard]] std::expected<std::string, ByteBufferError> ReadString() noexcept;
+			[[nodiscard]] std::expected<std::span<const std::uint8_t>, ByteBufferError> ReadBytes(std::size_t count) noexcept;
 
 			// template <typename... Types>
 			// [[nodiscard]] auto ReadMultiple() noexcept -> std::expected<std::tuple<SerializableValueType<Types>...>, Error>;
@@ -105,7 +121,8 @@ namespace Nb::Network
 
 			[[nodiscard]] std::vector<std::uint8_t> Release() noexcept;
 
-			friend std::ostream& operator<<(std::ostream& os, const Error& error);
+		public:
+			friend std::ostream& operator<<(std::ostream& os, const ByteBufferError& error);
 			friend std::ostream& operator<<(std::ostream& os, const ByteBuffer& buffer);
 
 		private:
