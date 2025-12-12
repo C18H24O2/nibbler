@@ -1,15 +1,25 @@
 #include <Common/Network/Server/SocketServer.hpp>
 
+#include <functional>
+#include <mutex>
+#include <unordered_map>
 #include <arpa/inet.h>
 #include <cstring>
 #include <iostream>
 #include <netinet/in.h>
+#include <signal.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <cstring>
 
 namespace Nb::Network::Server
 {
-	SocketServer::SocketServer(std::uint16_t port) : port(port), fd(-1)
+	static struct {
+		std::mutex mutex;
+		std::unordered_map<int, std::function<void(int)>> handlers;
+	}	SignalHandlers; // this is awful and i can't be bothered to make it half decent
+
+	SocketServer::SocketServer(std::uint16_t port, std::int32_t fd) : port(port), fd(fd)
 	{
 	}
 
@@ -17,6 +27,7 @@ namespace Nb::Network::Server
 	{
 		if (fd >= 0)
 		{
+			std::cout << "Closing socket" << std::endl;
 			::close(fd);
 			fd = -1;
 		}
@@ -27,17 +38,37 @@ namespace Nb::Network::Server
 		return this->running;
 	}
 
-	std::optional<Connection::Connection> SocketServer::TryAccept() noexcept
+	std::optional<Conn::Connection> SocketServer::TryAccept() noexcept
 	{
-		return {};
+		sockaddr_in client_addr{};
+		socklen_t client_len = sizeof(client_addr);
+		
+		int client_fd = ::accept(fd, reinterpret_cast<sockaddr*>(&client_addr), &client_len);
+		int e = errno;
+		if (client_fd < 0)
+		{
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+				return std::nullopt;
+
+			//TODO: log error
+			std::cout << "Failed to accept connection: " << std::strerror(e) << std::endl;
+			return std::nullopt;
+		}
+
+		std::cout << "Accepted connection: " << client_fd << " " << std::strerror(e) << std::endl;
+		
+		return Conn::Connection(client_fd, client_addr);
+	}
+
+	void SocketServer::MarkForShutdown() noexcept
+	{
+		this->running = false;
 	}
 
 	std::expected<SocketServer, SocketServer::Error> SocketServer::Create(std::uint16_t port) noexcept
 	{
-		auto server = SocketServer(port);
-
-		server.fd = ::socket(AF_INET, SOCK_STREAM, 0);
-		if (server.fd < 0)
+		int fd = ::socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+		if (fd < 0)
 		{
 			return std::unexpected(Error::CreateFailed);
 		}
@@ -48,20 +79,38 @@ namespace Nb::Network::Server
 		addr.sin_addr.s_addr = INADDR_ANY;
 		addr.sin_port = htons(port);
 
-		if (::bind(server.fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0)
+		if (::bind(fd, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0)
 		{
+			close(fd);
 			return std::unexpected(Error::BindFailed);
 		}
 
-		if (::listen(server.fd, 10) < 0)
+		if (::listen(fd, 10) < 0)
 		{
+			close(fd);
 			return std::unexpected(Error::ListenFailed);
 		}
 
 		int i = 1;
-		::setsockopt(server.fd, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(i));
+		::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(i));
 
-		return std::move(server);
+		return std::expected<SocketServer, SocketServer::Error>(std::in_place, port, fd);
+	}
+
+	static void SignalHandler(int signal)
+	{
+		SignalHandlers.handlers.at(signal)(signal);
+	}
+
+	void SocketServer::SetupSignalHandlers() noexcept
+	{
+		std::lock_guard lock(SignalHandlers.mutex);
+
+		SignalHandlers.handlers[SIGINT] = [this](int signal) { this->MarkForShutdown(); };
+		SignalHandlers.handlers[SIGTERM] = [this](int signal) { this->MarkForShutdown(); };
+
+		::signal(SIGINT, SignalHandler);
+		::signal(SIGTERM, SignalHandler);
 	}
 
 	constexpr static std::string_view GetErrorString(const SocketServer::Error& error) noexcept

@@ -21,14 +21,17 @@ namespace Nb::Network::Server
             };
 
         public:
+            explicit SocketServer(std::uint16_t port, std::int32_t fd);
             virtual ~SocketServer() noexcept;
             SocketServer(const SocketServer&) = delete;
             SocketServer& operator=(const SocketServer&) = delete;
             SocketServer(SocketServer&&) noexcept = default;
             SocketServer& operator=(SocketServer&&) noexcept = default;
 
+            [[nodiscard]] std::optional<Conn::Connection> TryAccept() noexcept;
+			void SetupSignalHandlers() noexcept;
             [[nodiscard]] bool RunEventLoop() const noexcept;
-            [[nodiscard]] std::optional<Connection::Connection> TryAccept() noexcept;
+			void MarkForShutdown() noexcept;
 
             friend std::ostream& operator<<(std::ostream& os, const Error& error);
 
@@ -36,11 +39,13 @@ namespace Nb::Network::Server
             static std::expected<SocketServer, Error> Create(std::uint16_t port) noexcept;
 
         private:
-            explicit SocketServer(std::uint16_t port);
+			friend class std::expected<SocketServer, Error>;
 
             std::uint16_t port;
             std::int32_t fd;
             bool running = true;
+
+			std::vector<Conn::Connection> connections;
     };
 
 };

@@ -8,7 +8,7 @@
 #include <Common/Utils/NonCopyable.hpp>
 #include <netinet/in.h>
 
-namespace Nb::Network::Connection
+namespace Nb::Network::Conn
 {
 	template<typename T>
 	concept Packet = requires(T t)
@@ -19,7 +19,7 @@ namespace Nb::Network::Connection
 		};
 	};
 
-	class Connection : Utils::NonCopyable
+	class Connection
 	{
 		public:
 			enum class Error {
@@ -35,7 +35,8 @@ namespace Nb::Network::Connection
 			};
 
 		public:
-			~Connection() noexcept override;
+			explicit Connection(int socketFd, sockaddr_in address) noexcept;
+			virtual ~Connection() noexcept;
 
 			[[nodiscard]] std::expected<std::size_t, Error> Read(std::span<std::byte> buffer) noexcept;
 			[[nodiscard]] std::expected<std::size_t, Error> Write(std::span<const std::byte> data) noexcept;
@@ -54,13 +55,9 @@ namespace Nb::Network::Connection
 			void Shutdown(bool read = true, bool write = true) noexcept;
 			[[nodiscard]] int GetFd() const noexcept;
 
-		   	static std::expected<Connection, Error> Create(int socketFd) noexcept;
-
 			friend std::ostream& operator<<(std::ostream& os, const Error& error);
 
-			friend class SocketServer;
 		private:
-			explicit Connection(int socketFd, sockaddr_in address) noexcept;
 
 			int socketFd;
 			sockaddr_in address;
