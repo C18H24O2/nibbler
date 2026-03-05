@@ -44,15 +44,10 @@ namespace Nb::Network::Conn
 			[[nodiscard]] std::expected<void, Error> WriteAll(std::span<const std::byte> data) noexcept;
 
 			std::expected<void, Error> SetTcpNoDelay(bool enabled) noexcept;
-			std::expected<void, Error> SetBlocking(bool blocking) noexcept;
-			std::expected<void, Error> SetTimeout(std::chrono::milliseconds read_timeout,
-												  std::chrono::milliseconds write_timeout) noexcept;
 
 			[[nodiscard]] std::string GetRemoteIp() const noexcept;
 			[[nodiscard]] std::uint16_t GetRemotePort() const noexcept;
-			[[nodiscard]] bool IsConnected() const noexcept;
 
-			void Shutdown(bool read = true, bool write = true) noexcept;
 			[[nodiscard]] int GetFd() const noexcept;
 
 			friend std::ostream& operator<<(std::ostream& os, const Error& error);

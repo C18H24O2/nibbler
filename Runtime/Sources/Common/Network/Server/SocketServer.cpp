@@ -57,7 +57,7 @@ namespace Nb::Network::Server
 
 		std::cout << "Accepted connection: " << client_fd << " " << std::strerror(e) << std::endl;
 		
-		return Conn::Connection(client_fd, client_addr);
+		return std::optional<Conn::Connection>(std::in_place, client_fd, client_addr);
 	}
 
 	void SocketServer::MarkForShutdown() noexcept

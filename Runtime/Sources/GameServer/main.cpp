@@ -14,6 +14,7 @@ using namespace std::chrono_literals;
 namespace Nb::GameServer
 {
 	using namespace Network::Server;
+	using namespace Network::Conn;
 
 	int main(const int argc, char** argv)
 	{
@@ -33,10 +34,14 @@ namespace Nb::GameServer
 		{
 			const auto target_time = std::chrono::steady_clock::now() + 50ms;
 
-			const auto result = server->TryAccept();
+			std::optional<Connection> result = server->TryAccept();
 			if (result)
 			{
 				std::cout << "New connection" << std::endl;
+				std::cout << "Connection: " << result->GetFd() << std::endl;
+				std::cout << "Remote IP: " << result->GetRemoteIp() << std::endl;
+				std::cout << "Remote Port: " << result->GetRemotePort() << std::endl;
+				result->SetTcpNoDelay(true);
 			}
 
 			std::this_thread::sleep_until(target_time);
