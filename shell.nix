@@ -13,7 +13,6 @@ in
   
     clang-tools
     bear
-    xmake
 
     sdl3.lib
     sdl3.dev
