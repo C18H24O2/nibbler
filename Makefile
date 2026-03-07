@@ -6,45 +6,43 @@
 #    By: kiroussa <contact@dynamicdispat.ch>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 01:44:00 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/05 02:06:33 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/07 17:32:19 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-EXECUTABLE := nibbler
+include ./make/config.mk
+include ./make/colors.mk
+include ./make/submodule/functions.mk
 
-MODULES_DIR := submodules
+CURRENT_MODULE := <root>
+PROJECT_ROOT := $(shell pwd)
 MODULES := cli core ui-mlx
-
-provideModuleOutput = $(MODULES_DIR)/$(1)/$(if $(filter $(FINAL_MODULE),$(1)),$(1),lib$(1).so)
-
-FINAL_MODULE := cli
-FINAL_MODULE_OUTPUT := $(call provideModuleOutput,$(FINAL_MODULE))
 
 define moduleOutput
 $(call provideModuleOutput,$(1)): $(MODULES_DIR)/$(1)/Makefile
-	$(MAKE) -C $(MODULES_DIR)/$(1)
+	@$(MAKE) -C $(MODULES_DIR)/$(1)
 endef
-define moduleClean
-_clean_$(1):
-	$(MAKE) -C $(MODULES_DIR)/$(1) clean
-endef
-define moduleFclean
-_fclean_$(1):
-	$(MAKE) -C $(MODULES_DIR)/$(1) fclean
+define moduleDelegate
+_$(1)_$(2):
+	@$(MAKE) -C $(MODULES_DIR)/$(1) $(2)
 endef
 
-all: $(NAME)
+all: $(EXECUTABLE)
 
-$(NAME): $(FINAL_MODULE_OUTPUT)
-	ln -sf $(FINAL_MODULE_OUTPUT) $(NAME)
+$(EXECUTABLE): $(FINAL_MODULE_OUTPUT)
+	@$(call taskStart)
+	@printf "Linking $(BOLD)$<$(RESET) to $(BOLD)$@$(RESET).\n"
+	@ln -sf $< $@
 
 $(foreach module,$(MODULES),$(eval $(call moduleOutput,$(module))))
-$(foreach module,$(MODULES),$(eval $(call moduleClean,$(module))))
-$(foreach module,$(MODULES),$(eval $(call moduleFclean,$(module))))
+$(foreach module,$(MODULES),$(eval $(call moduleDelegate,clean,$(module))))
+$(foreach module,$(MODULES),$(eval $(call moduleDelegate,fclean,$(module))))
 
 oclean:
 
 clean: oclean $(MODULES:%=_clean_%)
 
-fclean: oclean $(MODULES:%=_fclean_%)
-	rm -f $(NAME)
+fclean: oclean # $(MODULES:%=_fclean_%)
+	@$(call taskStart)
+	@printf "Removing $(BOLD)./$(EXECUTABLE)$(RESET).\n"
+	@rm -f $(EXECUTABLE)

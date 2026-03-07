@@ -16,3 +16,6 @@ build/
 .direnv/
 .gdb_history
 compile_commands.json
+/nibbler
+*.so
+*.out
