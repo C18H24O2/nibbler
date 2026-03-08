@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 02:07:36 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/08 02:22:41 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/08 23:48:14 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,8 @@ include ../../make/colors.mk
 include ../../make/functions.mk
 
 TARGET := $(call provideModuleOutput,$(CURRENT_MODULE))
+TARGET_NAME := $(call provideModuleOutputFile,$(CURRENT_MODULE))
+
 LDFLAGS += $(if $(filter %.so,$(TARGET)),-shared,)
 
 SRCS := $(shell find $(SRC_DIR) -type f -name '*.cpp')
@@ -31,20 +33,29 @@ OBJS := $(SRCS:%.cpp=%.o)
 SRCS := $(addprefix $(SRC_DIR)/,$(SRCS))
 OBJS := $(addprefix $(OBJ_DIR)/,$(OBJS))
 
+TARGET_DEPS := $(OBJS)
+ifeq ($(MODULE_NAME),$(FINAL_MODULE))
+TARGET_DEPS += $(LIB_MODULES_OUTPUT)
+endif
+
 .PHONY: all
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
+_ := $(info Target Deps: $(TARGET_DEPS))
+$(TARGET): $(TARGET_DEPS)
 	@$(call taskStart)
-	@printf "Linking $(BOLD)$(TARGET)$(RESET)\n"
-	@$(CXX) $(LDFLAGS) $< -o $@
+	@printf "Linking $(BOLD)$(TARGET_NAME)$(RESET)\n"
+	$(CXX) -o $@ $^ $(LDFLAGS)
+	@echo "$(TARGET): $^ $(PROJECT_ROOT)/$(MODULES_DIR)/$(CURRENT_MODULE)/Makefile" > $(DEP_DIR)/module.d
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@$(call taskStart)
 	@printf "Compiling $(BOLD)$<$(RESET)\n"
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
-
+	@mkdir -p $(dir $(DEP_DIR)/$*.tmp.d)
+	@$(CXX) $(CXXFLAGS) $(DFLAGS) -c $(CWD)/$< -o $@
+	@mv $(DEP_DIR)/$*.tmp.d $(DEP_DIR)/$*.d
+	@touch $(DEP_DIR)/$*.d
 
 .PHONY: clean
 clean:

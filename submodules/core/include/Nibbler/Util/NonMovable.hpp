@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   NonMovable.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/08 02:07:40 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/08 22:03:09 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/08 22:02:16 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/08 22:02:19 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <print>
-#include <Nibbler/Util/NonCopyable.hpp>
+#pragma once
 
 namespace Nibbler
 {
 
-void main(int argc, char **argv)
+class NonMovable
 {
-	(void)argc, (void)argv;
-	std::println("Hello, World!");
-}
+	protected:
+		NonMovable() = default;
+		~NonMovable() = default;
+
+		NonMovable(NonMovable &&) = delete;
+		NonMovable &operator=(NonMovable &&) = delete;
+};
 
 }; // namespace Nibbler
-
-int main(int argc, char **argv)
-{
-	Nibbler::main(argc, argv);
-	return 0;
-}

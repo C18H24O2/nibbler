@@ -3,7 +3,7 @@
 }:
 
 let
-  stdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.llvmPackages_21.stdenv;
+  stdenv = pkgs.stdenvAdapters.useMoldLinker pkgs.llvmPackages_22.stdenv;
 in
 (pkgs.mkShell.override { inherit stdenv; }) {
   nativeBuildInputs = with pkgs; [
@@ -12,13 +12,14 @@ in
     gdb
   
     clang-tools
+    ncurses
     bear
 
     sdl3.lib
     sdl3.dev
     glfw
-    xorg.libXinerama.dev
-    xorg.libXi.dev
+    libXinerama.dev
+    libXi.dev
     catch2_3
   ];
 }
