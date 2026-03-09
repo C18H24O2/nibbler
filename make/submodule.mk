@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 02:07:36 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/08 23:48:14 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/09 03:00:28 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,11 +41,10 @@ endif
 .PHONY: all
 all: $(TARGET)
 
-_ := $(info Target Deps: $(TARGET_DEPS))
 $(TARGET): $(TARGET_DEPS)
 	@$(call taskStart)
 	@printf "Linking $(BOLD)$(TARGET_NAME)$(RESET)\n"
-	$(CXX) -o $@ $^ $(LDFLAGS)
+	@$(CXX) -o $@ $^ $(LDFLAGS)
 	@echo "$(TARGET): $^ $(PROJECT_ROOT)/$(MODULES_DIR)/$(CURRENT_MODULE)/Makefile" > $(DEP_DIR)/module.d
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
@@ -53,7 +52,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@printf "Compiling $(BOLD)$<$(RESET)\n"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $(DEP_DIR)/$*.tmp.d)
-	@$(CXX) $(CXXFLAGS) $(DFLAGS) -c $(CWD)/$< -o $@
+	$(CXX) $(CXXFLAGS) $(DFLAGS) -c $(CWD)/$< -o $@
 	@mv $(DEP_DIR)/$*.tmp.d $(DEP_DIR)/$*.d
 	@touch $(DEP_DIR)/$*.d
 

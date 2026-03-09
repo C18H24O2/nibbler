@@ -1,31 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   LaunchArgument.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/08 02:07:40 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/08 22:03:09 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/09 03:05:51 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/09 03:41:23 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <print>
-#include <Nibbler/Util/NonCopyable.hpp>
+#pragma once
 
-namespace Nibbler
+#include <array>
+#include <string>
+#include <string_view>
+
+struct LaunchArgument
 {
+	char shortName;
+	std::string_view longName;
+	std::string_view description;
+};
+//TODO: template function that takes a <*>Options struct and complements the parsing
+//can it be done? the type is parsed at runtime so there needs to be a link from enum to function
 
-void main(int argc, char **argv)
-{
-	(void)argc, (void)argv;
-	std::println("Hello, World!");
-}
-
-}; // namespace Nibbler
-
-int main(int argc, char **argv)
-{
-	Nibbler::main(argc, argv);
-	return 0;
-}

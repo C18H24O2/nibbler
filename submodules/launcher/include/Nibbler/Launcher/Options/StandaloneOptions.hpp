@@ -1,28 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   NonCopyable.hpp                                    :+:      :+:    :+:   */
+/*   StandaloneOptions.hpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/08 22:02:06 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/09 00:30:00 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/09 01:08:47 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/09 03:13:38 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-namespace Nibbler
+#include <Nibbler/Launcher/LaunchArgument.hpp>
+
+namespace Nibbler::Launcher
 {
 
-class NonCopyable
+struct StandaloneOptions
 {
-	protected:
-		NonCopyable() = default;
-		virtual ~NonCopyable() = default;
-
-		NonCopyable(const NonCopyable &) = delete;
-		NonCopyable &operator=(const NonCopyable &) = delete;
+	static constexpr std::string_view name = "standalone";
+	static constexpr std::array<LaunchArgument, 0> arguments{};
 };
 
 }; // namespace Nibbler

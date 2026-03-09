@@ -1,28 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   NonCopyable.hpp                                    :+:      :+:    :+:   */
+/*   ServerOptions.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/08 22:02:06 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/09 00:30:00 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/09 01:09:34 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/09 03:13:28 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-namespace Nibbler
+#include <Nibbler/Launcher/LaunchArgument.hpp>
+
+namespace Nibbler::Launcher
 {
 
-class NonCopyable
+struct ServerOptions
 {
-	protected:
-		NonCopyable() = default;
-		virtual ~NonCopyable() = default;
-
-		NonCopyable(const NonCopyable &) = delete;
-		NonCopyable &operator=(const NonCopyable &) = delete;
+	std::string host;
+	int port;
+	
+	static constexpr std::string_view name = "server";
+	static constexpr std::array<LaunchArgument, 2> arguments{
+		LaunchArgument{'H', "host", "Address to listen on"},
+		LaunchArgument{'p', "port", "Port to listen on"}
+	};
 };
 
 }; // namespace Nibbler

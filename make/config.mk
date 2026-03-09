@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/07 16:36:43 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/08 23:47:18 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/09 00:23:20 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,11 +35,11 @@ BUILD_DIR := $(SHARED_BUILD_DIR)/$(MODULE_NAME)
 OBJ_DIR := $(BUILD_DIR)/obj
 DEP_DIR := $(BUILD_DIR)/dep
 
-MODULES := cli core ui-mlx
+FINAL_MODULE := launcher
+MODULES := $(FINAL_MODULE) core ui-mlx
 
 include $(PROJECT_ROOT)/make/functions.mk
 
-FINAL_MODULE := cli
 FINAL_MODULE_OUTPUT := $(call provideModuleOutput,$(FINAL_MODULE))
 LIB_MODULES := $(filter-out $(FINAL_MODULE),$(MODULES))
 LIB_MODULES_OUTPUT := $(foreach module,$(LIB_MODULES),$(call provideModuleOutput,$(module)))

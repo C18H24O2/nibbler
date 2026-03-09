@@ -6,7 +6,7 @@
 #    By: kiroussa <contact@dynamicdispat.ch>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 01:44:00 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/08 23:57:07 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/09 01:11:40 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ all: $(EXECUTABLE)
 include $(shell find $(SHARED_BUILD_DIR) -type f -name '*.d' 2>/dev/null)
 
 $(SHARED_BUILD_DIR)/%:
-	@echo "[*] Invalidating $@"
+	@# @echo "[*] Invalidating $@"
 	@if [ $(findstring .c, $<) ] || [ $(findstring .s, $<) ]; then \
 		rm -rf $@; \
 	fi

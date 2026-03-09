@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   NonCopyable.hpp                                    :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/08 22:02:06 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/09 00:30:00 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/08 02:07:40 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/09 02:15:19 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include <print>
 
-namespace Nibbler
+#include <Nibbler/Launcher/LaunchOptions.hpp>
+
+using namespace Nibbler::Launcher;
+
+int main(int argc, char **argv)
 {
+	auto options = LaunchOptions::Parse(argc, argv);
+	if (!options)
+		return 1;
 
-class NonCopyable
-{
-	protected:
-		NonCopyable() = default;
-		virtual ~NonCopyable() = default;
-
-		NonCopyable(const NonCopyable &) = delete;
-		NonCopyable &operator=(const NonCopyable &) = delete;
-};
-
-}; // namespace Nibbler
+	std::println(stdout, "On launch le {} la", options->mode.GetName());
+	return 0;
+}
