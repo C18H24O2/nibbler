@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:06:26 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/10 11:35:02 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/10 17:46:24 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ concept OptionsType = requires {
 using AllOptions = std::tuple<ClientOptions, ServerOptions, StandaloneOptions>;
 
 template<typename Tuple, typename Func>
-void forEachOptionsType(Func&& f) {
+void ForEachOptionsType(Func&& f) {
     [&]<std::size_t... Is>(std::index_sequence<Is...>) {
         (f.template operator()<std::tuple_element_t<Is, Tuple>>(), ...);
     }(std::make_index_sequence<std::tuple_size_v<Tuple>>{});

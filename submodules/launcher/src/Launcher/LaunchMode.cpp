@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:30:23 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/10 11:36:55 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/10 17:45:54 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ bool LaunchMode::operator!=(LaunchMode::Value a) const noexcept
 
 std::optional<LaunchOptions> LaunchMode::DelegateParse(int argc, char **argv) const noexcept
 {
-	switch (value)
+	template for (auto i = 0u; i < names.size(); i++)
 	{
-		default:
-			return std::nullopt;
+		
 	}
+	return std::nullopt;
 }
 
 std::string_view LaunchMode::GetName() const noexcept

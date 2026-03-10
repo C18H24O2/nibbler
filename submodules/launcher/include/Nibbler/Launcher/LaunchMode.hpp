@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 00:23:57 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/10 11:36:37 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/10 17:48:28 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ public:
 	[[nodiscard]] std::string_view GetName() const noexcept;
 
 	[[nodiscard]] static std::optional<LaunchMode> FromString(std::string_view name) noexcept;
+
+	template <typename T>
+	static std::optional<LaunchOptions> DelegateParse(int argc, char **argv) noexcept { 
+	}
+
 private:
 	Value value;
 
