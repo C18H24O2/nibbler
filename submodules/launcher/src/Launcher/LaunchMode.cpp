@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:30:23 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/09 03:34:35 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/10 11:36:55 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,6 @@
 
 namespace Nibbler::Launcher
 {
-
-LaunchMode::LaunchMode(LaunchMode::Value mode) noexcept
-{
-	value = mode;
-}
 
 bool LaunchMode::operator==(LaunchMode a) const noexcept
 {

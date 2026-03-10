@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 00:23:57 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/09 02:05:27 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/10 11:36:37 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ public:
 		CLIENT,
 		SERVER,
 	};
-	LaunchMode() = default;
-	LaunchMode(Value aLaunchMode) noexcept;
+	constexpr LaunchMode() = default;
+	constexpr LaunchMode(Value aLaunchMode) noexcept : value(aLaunchMode) {}
 
 	explicit operator bool() const = delete;
 	[[nodiscard]] bool operator==(LaunchMode a) const noexcept;

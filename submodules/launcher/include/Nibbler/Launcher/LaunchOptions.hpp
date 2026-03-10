@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:06:26 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/09 03:37:35 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/10 11:35:02 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,18 @@ struct LaunchOptions;
 
 };
 
+#include <Nibbler/Launcher/LaunchMode.hpp>
+
 #include <Nibbler/Launcher/Options/ClientOptions.hpp>
 #include <Nibbler/Launcher/Options/ServerOptions.hpp>
 #include <Nibbler/Launcher/Options/StandaloneOptions.hpp>
-
-#include <Nibbler/Launcher/LaunchMode.hpp>
 
 namespace Nibbler::Launcher
 {
 
 template<typename T>
 concept OptionsType = requires {
-	{ T::name } -> std::convertible_to<std::string_view>;
+	{ T::mode } -> std::convertible_to<LaunchMode>;
     { T::arguments } -> std::ranges::range;
 };
 

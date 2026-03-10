@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:13:04 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/09 03:22:38 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/10 11:34:22 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static inline void printUsage(bool help)
 	forEachOptionsType<AllOptions>([&optionNames]<typename T>() {
 		if (!optionNames.empty())
 			optionNames += "|";
-		optionNames += T::name;
+		optionNames += T::mode.GetName();
 	});
 	std::println(stream, "Usage: nibbler [{}] [options...]", optionNames);
 
@@ -43,7 +43,7 @@ static inline void printUsage(bool help)
 		forEachOptionsType<AllOptions>([stream, maxNameSize]<typename T>() {
 			if (T::arguments.empty())
 				return;
-			std::println(stream, "{}", T::name);
+			std::println(stream, "{}", T::mode.GetName());
 			for (auto&& arg : T::arguments)
 			{
 				size_t curSize = arg.longName.size();
