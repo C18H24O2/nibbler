@@ -1,27 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Logger.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/08 02:07:40 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/21 20:49:31 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/21 20:50:08 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/21 21:15:40 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <print>
+#pragma once
 
-#include <Nibbler/Launcher/LaunchOptions.hpp>
 
-using namespace Nibbler::Launcher;
-
-int main(int argc, char **argv)
-{
-	auto options = LaunchOptions::Parse(argc, argv);
-	if (!options)
-		return 1;
-
-	std::println(stdout, "On launch le {} la", options->modeOptions::modeName);
-	return 0;
-}

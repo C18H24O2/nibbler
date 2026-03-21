@@ -6,26 +6,18 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:06:26 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/10 17:46:24 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/21 21:03:23 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <optional>
+#include <span>
+#include <string_view>
 #include <variant>
 
 #include <Nibbler/Launcher/LaunchArgument.hpp>
-
-namespace Nibbler::Launcher
-{
-
-struct LaunchOptions;
-
-};
-
-#include <Nibbler/Launcher/LaunchMode.hpp>
-
 #include <Nibbler/Launcher/Options/ClientOptions.hpp>
 #include <Nibbler/Launcher/Options/ServerOptions.hpp>
 #include <Nibbler/Launcher/Options/StandaloneOptions.hpp>
@@ -35,7 +27,7 @@ namespace Nibbler::Launcher
 
 template<typename T>
 concept OptionsType = requires {
-	{ T::mode } -> std::convertible_to<LaunchMode>;
+	{ T::modeName } -> std::convertible_to<std::string_view>;
     { T::arguments } -> std::ranges::range;
 };
 
@@ -60,11 +52,30 @@ using OptionsVariant = typename TupleToVariant<AllOptions>::type;
 
 struct LaunchOptions
 {
-	LaunchMode mode;
+	bool help;
 	int verbosity;
-	OptionsVariant options;
+	OptionsVariant modeOptions;
 
 	[[nodiscard]] static std::optional<LaunchOptions> Parse(int argc, char **argv) noexcept;
+
+	template <typename T>
+	[[nodiscard]] static bool PartialParse(int argc, char **argv, std::span<LaunchArgument<T>> args) noexcept
+	{
+		(void) argc, (void) argv, (void) args;
+		return false;
+	}
+
+	template<typename T>
+	static std::optional<OptionsVariant> ParseMode(int argc, char **argv) noexcept
+	{
+		(void) argc, (void) argv;
+		return std::nullopt;
+	}
+
+	static constexpr auto builtinArguments = std::to_array<LaunchArgument<LaunchOptions>>({
+		{'d', "verbose", "Increase verbosity", &LaunchOptions::verbosity},
+		{'h', "help", "Display this help message", &LaunchOptions::help}
+	});
 };
 
 }; // namespace Nibbler
