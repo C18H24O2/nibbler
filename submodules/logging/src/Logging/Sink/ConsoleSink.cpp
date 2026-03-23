@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   NonMovable.hpp                                     :+:      :+:    :+:   */
+/*   ConsoleSink.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/08 22:02:16 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/23 00:13:25 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/23 00:26:37 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/23 00:26:40 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include <Nibbler/Logging/Sink/ConsoleSink.hpp>
 
-namespace Nibbler::Util
+namespace Nibbler::Logging
 {
 
-struct NonMovable
+void ConsoleSink::write(const LogRecord& record) noexcept
 {
-	NonMovable() = default;
-	virtual ~NonMovable() = default;
-	NonMovable(const NonMovable&) = default;
-	NonMovable(NonMovable&&) noexcept = delete;
-	NonMovable& operator=(const NonMovable&) = default;
-	NonMovable& operator=(NonMovable&&) noexcept = delete;
-};
+	std::cout << record.message << std::endl;
+}
 
-}; // namespace Nibbler::Util
+void ConsoleSink::flush() noexcept
+{
+	std::cout.flush();
+}
+
+}; // namespace Nibbler::Logging

@@ -6,23 +6,24 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 22:02:06 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/09 00:30:00 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/23 00:13:29 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-namespace Nibbler
+namespace Nibbler::Util
 {
 
-class NonCopyable
+struct NonCopyable
 {
-	protected:
-		NonCopyable() = default;
-		virtual ~NonCopyable() = default;
+	NonCopyable() = default;
+	virtual ~NonCopyable() = default;
 
-		NonCopyable(const NonCopyable &) = delete;
-		NonCopyable &operator=(const NonCopyable &) = delete;
+	NonCopyable(const NonCopyable &) = delete;
+	NonCopyable &operator=(const NonCopyable &) = delete;
+	NonCopyable(NonCopyable &&) = default;
+	NonCopyable &operator=(NonCopyable &&) = default;
 };
 
-}; // namespace Nibbler
+}; // namespace Nibbler:Util
