@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:13:04 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 02:18:34 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:03:23 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,24 @@ std::optional<LaunchOptions> LaunchOptions::Parse(int argc, char **argv) noexcep
 		return options;
 	}
 
-	if (options.verbosity > 0)
-		std::println(stderr, "Verbosity: {}", options.verbosity);
-
 	if (args.size() <= 1)
 		return options;
 
 	std::string_view mode = args[1];
 	args = args.subspan(1);
+	args[0] = argv[0]; // keep the program name
+
+	std::optional<std::string_view> modeName = std::nullopt;
+	ForEachOptionsType<AllOptions>([&modeName, mode]<typename T>() {
+		if (mode == T::modeName)
+			modeName = T::modeName;
+	});
+	if (!modeName)
+	{
+		std::println(stderr, "{}: unknown mode -- \"{}\"", args[0], mode);
+		printUsage(false);
+		return std::nullopt;
+	}
 
 	std::optional<OptionsVariant> modeOptions = std::nullopt;
 	ForEachOptionsType<AllOptions>([&modeOptions, mode, &args]<typename T>() {
@@ -95,11 +105,7 @@ std::optional<LaunchOptions> LaunchOptions::Parse(int argc, char **argv) noexcep
 			modeOptions = LaunchOptions::ParseMode<T>(args);
 	});
 	if (!modeOptions)
-	{
-		std::println(stderr, "Invalid mode: {}", mode);
-		printUsage(false);
 		return std::nullopt;
-	}
 
 	options.modeOptions = *modeOptions;
 	return options;

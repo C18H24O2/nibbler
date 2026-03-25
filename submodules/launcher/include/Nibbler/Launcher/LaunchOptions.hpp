@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:06:26 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 02:18:47 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:00:45 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,13 @@ private:
 	template <typename T, std::size_t N>
 	struct GetoptBuilder
 	{
-		std::array<char, N * 3 + 2> shortOpts{};
+		std::array<char, N * 3 + 3> shortOpts{};
 		std::array<struct option, N + 1> longOpts{};
 
 		constexpr GetoptBuilder(const std::array<LaunchArgument<T>, N>& args)
 		{
 			std::size_t si = 0;
+			shortOpts[si++] = '+';
 			shortOpts[si++] = ':';
 			for (std::size_t i = 0; i < N; ++i)
 			{
