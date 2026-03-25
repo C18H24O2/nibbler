@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 00:22:59 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/23 00:25:29 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:42:23 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ LoggerFactory& LoggerFactory::instance()
 	return instance;
 }
 
-void LoggerFactory::addGlobalConfigurator(ConfigureFn fn)
+void LoggerFactory::addConfigurator(ConfigureFn fn)
 {
 	std::unique_lock lock(registryMutex);
 	globalConfigurators.push_back(std::move(fn));
@@ -44,14 +44,14 @@ void LoggerFactory::reconfigure()
 void LoggerFactory::registerLogger(Logger& logger)
 {
 	std::unique_lock lock(registryMutex);
-	loggers[std::string(logger.name())] = &logger;
+	loggers[std::string(logger.getName())] = &logger;
 	applyConfigurators(logger);
 }
  
 void LoggerFactory::unregisterLogger(Logger& logger)
 {
 	std::unique_lock lock(registryMutex);
-	loggers.erase(std::string(logger.name()));
+	loggers.erase(std::string(logger.getName()));
 }
  
 Logger* LoggerFactory::get(std::string_view name)
@@ -75,7 +75,7 @@ void LoggerFactory::applyConfigurators(Logger& logger)
 		fn(logger);
  
 	for (auto& [prefix, fn] : prefixConfigurators)
-		if (logger.name().starts_with(prefix))
+		if (logger.getName().starts_with(prefix))
 			fn(logger);
 }
 

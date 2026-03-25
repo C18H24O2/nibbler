@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/07 16:36:43 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/22 23:53:44 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/25 00:55:55 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ MAKE := make --debug=none --no-print-directory
 CWD := $(shell pwd)
 
 CXX := clang++
-CXXFLAGS := -Wall -Wextra -std=c++23
+CXXFLAGS := -Wall -Wextra -std=c++23 -fPIC
 ifeq ($(DEBUG),1)
 CXXFLAGS += -ggdb -g3
 else
@@ -23,8 +23,8 @@ CXXFLAGS += -Werror -O2
 endif
 
 DFLAGS = -MT $@ -MMD -MP -MF $(DEP_DIR)/$*.tmp.d
-#TODO: link against everything under the sun
-LDFLAGS := 
+#TODO: link against third-party libs
+LDFLAGS := -latomic
 
 SRC_DIR := src
 INC_DIR := include

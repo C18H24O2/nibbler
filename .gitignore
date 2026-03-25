@@ -19,3 +19,5 @@ compile_commands.json
 /nibbler
 *.so
 *.out
+vgcore.*
+core.*

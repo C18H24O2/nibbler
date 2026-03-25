@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:51:11 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/23 00:20:00 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:47:10 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,12 @@
 
 namespace Nibbler::Logging
 {
+
+LogLevel::LogLevel(uint16_t value, std::string_view name) noexcept
+	: priority(value), name(name) {}
+
+LogLevel::LogLevel() noexcept
+	: priority(0), name("Off") {}
 
 std::string_view LogLevel::getName() const noexcept
 {
@@ -36,13 +42,13 @@ std::strong_ordering LogLevel::operator<=>(const LogLevel& other) const noexcept
 	return priority <=> other.priority;
 }
 
-const LogLevel LogLevel::All(0, "All");
-const LogLevel LogLevel::Trace(100, "Trace");
-const LogLevel LogLevel::Debug(200, "Debug");
-const LogLevel LogLevel::Info(300, "Info");
-const LogLevel LogLevel::Warn(400, "Warn");
-const LogLevel LogLevel::Error(500, "Error");
-const LogLevel LogLevel::Fatal(600, "Fatal");
+const LogLevel LogLevel::All(0, "ALL");
+const LogLevel LogLevel::Trace(100, "TRACE");
+const LogLevel LogLevel::Debug(200, "DEBUG");
+const LogLevel LogLevel::Info(300, "INFO");
+const LogLevel LogLevel::Warn(400, "WARN");
+const LogLevel LogLevel::Error(500, "ERROR");
+const LogLevel LogLevel::Fatal(600, "FATAL");
 const LogLevel LogLevel::Off(std::numeric_limits<uint16_t>::max(), "Off");
 
 }; // namespace Nibbler::Logging

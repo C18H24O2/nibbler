@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:48:47 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/23 00:19:43 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 00:48:27 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,15 @@
 #include <cstdint>
 #include <string_view>
 
+#include <Nibbler/Util/Canonical.hpp>
+
 namespace Nibbler::Logging
 {
  
 class LogLevel final {
 public:
-	constexpr LogLevel(uint16_t value, std::string_view name) noexcept
-		: priority(value), name(name) {}
-	~LogLevel() noexcept = default;
-	LogLevel(const LogLevel&) noexcept = default;
-	LogLevel(LogLevel&&) noexcept = default;
-	LogLevel& operator=(const LogLevel&) noexcept = default;
-	LogLevel& operator=(LogLevel&&) noexcept = default;
+	DEFAULT_CANONICAL_FINAL_MEMBERS(LogLevel)
+	LogLevel(uint16_t value, std::string_view name) noexcept;	
  
 	explicit operator bool() const = delete;
  
@@ -46,8 +43,7 @@ public:
 	static const LogLevel Off;
  
 private:
-	constexpr LogLevel() noexcept
-		: priority(0), name("Off") {}
+	LogLevel() noexcept;
 
 	uint16_t priority;
 	std::string_view name;

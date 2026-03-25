@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConsoleSink.hpp                                    :+:      :+:    :+:   */
+/*   LogMarker.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/23 00:26:11 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:31:15 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/25 02:52:20 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/25 03:08:56 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <Nibbler/Util/Canonical.hpp>
-#include <Nibbler/Logging/IFormatter.hpp>
-#include <Nibbler/Logging/ISink.hpp>
+#include <string>
+#include <string_view>
 
+#include <Nibbler/Util/Canonical.hpp>
+ 
 namespace Nibbler::Logging
 {
 
-class ConsoleSink : public ISink
+struct LogMarker
 {
-public:
-	DEFAULT_CANONICAL_MEMBERS(ConsoleSink)
-	ConsoleSink(std::shared_ptr<IFormatter> formatter) noexcept;
+	[[nodiscard]] std::string getFullName(std::string_view separator = ".") const noexcept;
 
-	void write(const Logger& logger, const LogRecord& record) noexcept override;
-	void flush() noexcept override;
-private:
-	ConsoleSink() noexcept = delete;
-	std::shared_ptr<IFormatter> formatter;
+	const std::string_view name;
+	const LogMarker* parent = nullptr;
 };
 
 }; // namespace Nibbler::Logging

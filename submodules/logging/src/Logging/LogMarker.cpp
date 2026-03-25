@@ -1,35 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConsoleSink.hpp                                    :+:      :+:    :+:   */
+/*   LogMarker.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/23 00:26:11 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:31:15 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/25 02:57:12 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/25 03:09:15 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-
-#include <Nibbler/Util/Canonical.hpp>
-#include <Nibbler/Logging/IFormatter.hpp>
-#include <Nibbler/Logging/ISink.hpp>
+#include <Nibbler/Logging/LogMarker.hpp>
 
 namespace Nibbler::Logging
 {
 
-class ConsoleSink : public ISink
+std::string LogMarker::getFullName(std::string_view separator) const noexcept
 {
-public:
-	DEFAULT_CANONICAL_MEMBERS(ConsoleSink)
-	ConsoleSink(std::shared_ptr<IFormatter> formatter) noexcept;
-
-	void write(const Logger& logger, const LogRecord& record) noexcept override;
-	void flush() noexcept override;
-private:
-	ConsoleSink() noexcept = delete;
-	std::shared_ptr<IFormatter> formatter;
-};
+	if (!parent)
+		return std::string(name);
+	return parent->getFullName(separator) + std::string(separator) + std::string(name);
+}
 
 }; // namespace Nibbler::Logging

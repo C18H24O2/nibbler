@@ -1,33 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ISink.hpp                                          :+:      :+:    :+:   */
+/*   LogMarkers.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/22 23:45:09 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:31:22 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/25 03:01:29 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/25 03:09:29 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <Nibbler/Logging/LogRecord.hpp>
+#include <Nibbler/Logging/LogMarker.hpp>
 
-namespace Nibbler::Logging
+namespace Nibbler::Launcher::LogMarkers
 {
 
-class Logger;
+using namespace Nibbler::Logging;
 
-class ISink
-{
-public:
-	DEFAULT_CANONICAL_MEMBERS(ISink)
+static constexpr LogMarker base{"launcher"};
+static constexpr LogMarker argparse{"arguments", &base};
 
-	virtual void write(const Logger& logger, const LogRecord& record) noexcept = 0;
-	virtual void flush() noexcept = 0;
-protected:
-	ISink() noexcept = default;
-};
-
-}; // namespace Nibbler::Logging
+}; // namespace Nibbler::Launcher::LogMarkers

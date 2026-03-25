@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:50:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/23 00:28:47 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:42:56 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ namespace Nibbler::Logging
 class Logger final : private Util::NonCopyable, private Util::NonMovable {
 public:
 	explicit Logger(std::string_view name, std::source_location loc = std::source_location::current());
-	explicit Logger(std::source_location loc = std::source_location::current());
-
 	virtual ~Logger() noexcept;
 
 	void addSink(std::shared_ptr<ISink> sink);
@@ -44,11 +42,19 @@ public:
 	void setLevel(LogLevel logLevel) noexcept;
 	[[nodiscard]] LogLevel getLevel() const noexcept;
 
-	[[nodiscard]] std::string_view name() const noexcept;
-	[[nodiscard]] std::string_view file() const noexcept;
+	[[nodiscard]] std::string_view getName() const noexcept;
+	[[nodiscard]] std::source_location getLocation() const noexcept;
+	[[nodiscard]] std::string_view getNibblerModule() const noexcept;
+
+	template <typename... Args>
+	void log(LogLevel logLevel, std::source_location loc, std::format_string<Args...> fmt, Args&&... args) noexcept
+	{
+		log(nullptr, logLevel, loc, fmt, std::forward<Args>(args)...);
+	}
 
 	template <typename... Args>
 	void log(
+		LogMarker* marker,
 		LogLevel logLevel,
 		std::source_location loc,
 		std::format_string<Args...> fmt,
@@ -59,6 +65,7 @@ public:
 
 		LogRecord record {
 			.level = logLevel,
+			.marker = marker,
 			.message = std::format(fmt, std::forward<Args>(args)...),
 			.location = loc,
 			.time = std::chrono::system_clock::now(),
@@ -67,16 +74,50 @@ public:
 
 		std::shared_lock lock(sinkMutex);
 		for (auto& sink : sinks)
-			sink->write(record);
+			sink->write(*this, record);
 	}
+
+private:
+	struct LogProxy {
+		Logger& logger;
+		LogLevel level;
+
+		template <typename... Args>
+		struct Caller {
+			Caller(Logger& logger, LogLevel level, std::source_location loc,
+				   std::format_string<Args...> fmt, Args&&... args) noexcept
+			{ logger.log(level, loc, fmt, std::forward<Args>(args)...); }
+		};
+
+		struct CallSite {
+			Logger& logger;
+			LogLevel level;
+			std::source_location loc;
+			LogMarker* marker = nullptr;
+
+			template <typename... Args>
+			void emit(std::format_string<Args...> fmt, Args&&... args) noexcept
+			{ logger.log(marker, level, loc, fmt, std::forward<Args>(args)...); }
+		};
+
+		CallSite operator()(std::source_location loc = std::source_location::current()) noexcept;
+		CallSite operator()(const LogMarker& marker, std::source_location loc = std::source_location::current()) noexcept;
+	};
+
+public:
+	LogProxy trace { *this, LogLevel::Trace };
+	LogProxy debug { *this, LogLevel::Debug };
+	LogProxy info  { *this, LogLevel::Info  };
+	LogProxy warn  { *this, LogLevel::Warn  };
+	LogProxy error { *this, LogLevel::Error };
+	LogProxy fatal { *this, LogLevel::Fatal };
 
 	void flush() noexcept;
 
 private:
-	void init(std::string_view name, std::string_view file);
-
-	std::string module;
-	std::string sourceFile;
+	std::string name;
+	std::source_location loc;
+	std::string nibblerModule;
 	std::atomic<LogLevel> minLogLevel{LogLevel::Info};
 	std::shared_mutex sinkMutex;
 	std::vector<std::shared_ptr<ISink>> sinks;

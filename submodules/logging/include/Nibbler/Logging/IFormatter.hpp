@@ -1,35 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConsoleSink.hpp                                    :+:      :+:    :+:   */
+/*   IFormatter.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/23 00:26:11 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:31:15 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/25 00:39:11 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/25 03:31:08 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <Nibbler/Util/Canonical.hpp>
-#include <Nibbler/Logging/IFormatter.hpp>
-#include <Nibbler/Logging/ISink.hpp>
+#include <Nibbler/Logging/LogRecord.hpp>
 
 namespace Nibbler::Logging
 {
 
-class ConsoleSink : public ISink
+class Logger;
+
+class IFormatter
 {
 public:
-	DEFAULT_CANONICAL_MEMBERS(ConsoleSink)
-	ConsoleSink(std::shared_ptr<IFormatter> formatter) noexcept;
+	DEFAULT_CANONICAL_MEMBERS(IFormatter)
 
-	void write(const Logger& logger, const LogRecord& record) noexcept override;
-	void flush() noexcept override;
-private:
-	ConsoleSink() noexcept = delete;
-	std::shared_ptr<IFormatter> formatter;
+	virtual std::string format(const Logger& logger, const LogRecord& record) noexcept = 0;
+protected:
+	IFormatter() noexcept = default;
 };
 
 }; // namespace Nibbler::Logging

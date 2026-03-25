@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 03:05:51 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/21 21:03:08 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 03:50:33 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,13 @@ struct LaunchArgument
 	std::string_view description;
 
 	using FieldPtr = std::variant<
-        std::string T::*,
-        int         T::*,
-        bool        T::*,
-        double      T::*
-    >;
+		std::string T::*,
+		int			T::*,
+		bool		T::*,
+		double		T::*
+	>;
 
-    FieldPtr fieldPtr;
+	FieldPtr fieldPtr;
+	bool requiresArg = false;
+	void (*modifierFn)(T&) = nullptr;
 };
