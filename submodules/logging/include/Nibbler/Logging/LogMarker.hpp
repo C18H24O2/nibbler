@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 02:52:20 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:08:56 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:35:35 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ namespace Nibbler::Logging
 
 struct LogMarker
 {
-	[[nodiscard]] std::string getFullName(std::string_view separator = ".") const noexcept;
+	[[nodiscard]] std::string GetFullName(std::string_view separator = ".") const noexcept;
 
 	const std::string_view name;
 	const LogMarker* parent = nullptr;

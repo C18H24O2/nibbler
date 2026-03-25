@@ -1,33 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IFormatter.hpp                                     :+:      :+:    :+:   */
+/*   Registry.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/25 00:39:11 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:36:39 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/25 16:00:39 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/25 16:00:46 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <Nibbler/Util/Canonical.hpp>
-#include <Nibbler/Logging/LogRecord.hpp>
-
-namespace Nibbler::Logging
+namespace Nibbler::Registry
 {
 
-class Logger;
-
-class IFormatter
-{
-public:
-	DEFAULT_CANONICAL_MEMBERS(IFormatter)
-
-	[[nodiscard]] virtual std::string Format(const Logger& logger, const LogRecord& record) noexcept = 0;
-protected:
-	IFormatter() noexcept = default;
-};
-
-}; // namespace Nibbler::Logging
+}; // namespace Nibbler::Registry

@@ -6,7 +6,7 @@
 #    By: kiroussa <contact@dynamicdispat.ch>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 01:44:00 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/25 04:16:02 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/25 16:43:23 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,6 +65,7 @@ fclean: clean # $(MODULES:%=fclean_%)
 compile_commands.json: fclean
 	@$(call taskStart,Generating $(BOLD)$@$(RESET)\n)
 	@bear -- $(MAKE) -j$(shell nproc)
+	sed -i 's|$(CXX)|$(shell which $(CXX))|g' compile_commands.json
 
 .PHONY: re
 re: fclean all

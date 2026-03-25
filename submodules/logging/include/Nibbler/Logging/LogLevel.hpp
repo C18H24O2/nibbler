@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:48:47 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:46:22 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:35:35 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ public:
  
 	explicit operator bool() const = delete;
  
-	[[nodiscard]] std::string_view getName() const noexcept;
-	[[nodiscard]] uint16_t getPriority() const noexcept;
+	[[nodiscard]] std::string_view GetName() const noexcept;
+	[[nodiscard]] uint16_t GetPriority() const noexcept;
  
 	[[nodiscard]] bool operator==(const LogLevel&) const noexcept;
 	[[nodiscard]] std::strong_ordering operator<=>(const LogLevel& other) const noexcept;

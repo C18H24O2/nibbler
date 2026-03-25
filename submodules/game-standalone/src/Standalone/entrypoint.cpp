@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 04:10:59 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:50:53 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:37:36 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ Logging::Logger logger("entrypoint");
 void Entrypoint(Launcher::LaunchOptions& options)
 {
 	(void)options;
-	logger.debug().emit("Standalone mode entrypoint");
+	logger.Debug().Emit("Standalone mode entrypoint");
 
 	// Steps:
 	// - Setup the internal server

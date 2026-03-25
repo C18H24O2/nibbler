@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:06:26 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:22:37 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 17:10:19 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ template<typename T>
 concept OptionsType = requires {
 	{ T::modeName } -> std::convertible_to<std::string_view>;
 	{ T::arguments } -> std::ranges::range;
+	{ T::CallEntrypoint(std::declval<Launcher::LaunchOptions&>()) } -> std::same_as<void>;
 };
 
 using AllOptions = std::tuple<ClientOptions, ServerOptions, StandaloneOptions>;

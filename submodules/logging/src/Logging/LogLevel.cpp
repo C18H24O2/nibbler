@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:51:11 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:43:49 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:35:35 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@ LogLevel::LogLevel(uint16_t value, std::string_view name) noexcept
 LogLevel::LogLevel() noexcept
 	: priority(0), name("Off") {}
 
-std::string_view LogLevel::getName() const noexcept
+std::string_view LogLevel::GetName() const noexcept
 {
 	return name;
 }
 
-uint16_t LogLevel::getPriority() const noexcept
+uint16_t LogLevel::GetPriority() const noexcept
 {
 	return priority;
 }

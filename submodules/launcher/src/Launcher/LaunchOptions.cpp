@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:13:04 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:03:23 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:32:30 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 namespace Nibbler::Launcher
 {
 
-constexpr void printUsage(bool help)
+constexpr void PrintUsage(bool help)
 {
 	std::FILE *const stream = help ? stdout : stderr;
 
@@ -76,7 +76,7 @@ std::optional<LaunchOptions> LaunchOptions::Parse(int argc, char **argv) noexcep
 		return std::nullopt;
 	if (options.help)
 	{
-		printUsage(true);
+		PrintUsage(true);
 		return options;
 	}
 
@@ -95,7 +95,7 @@ std::optional<LaunchOptions> LaunchOptions::Parse(int argc, char **argv) noexcep
 	if (!modeName)
 	{
 		std::println(stderr, "{}: unknown mode -- \"{}\"", args[0], mode);
-		printUsage(false);
+		PrintUsage(false);
 		return std::nullopt;
 	}
 

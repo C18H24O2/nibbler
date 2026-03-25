@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:12:24 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:57:03 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:34:31 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,26 +31,26 @@ class LoggerFactory final : private Util::NonCopyable, private Util::NonMovable 
 public:
 	using ConfigureFn = std::function<void(Logger&)>;
 
-	static LoggerFactory& instance();
+	static LoggerFactory& Instance();
 
-	void addConfigurator(ConfigureFn fn);
-	void reconfigure();
+	void AddConfigurator(ConfigureFn fn);
+	void Reconfigure();
 
-	void registerLogger(Logger& logger);
-	void unregisterLogger(Logger& logger);
+	void RegisterLogger(Logger& logger);
+	void UnregisterLogger(Logger& logger);
 
-	Logger* get(std::string_view name);
+	Logger* Get(std::string_view name);
 
 	// This is used to check whether the LoggerFactory's singleton has been destroyed
 	// by the dynamic loader and prevent Loggers from trying to access it, causing,
 	// among other things, a segmentation fault. :3
-	static bool isAlive() noexcept;
+	static bool IsAlive() noexcept;
 
 private:
 	LoggerFactory() = default;
 	~LoggerFactory() noexcept;
 
-	void applyConfigurators(Logger& logger);
+	void ApplyConfigurators(Logger& logger);
 
 	std::shared_mutex registryMutex;
 	std::vector<Logger*> loggers;

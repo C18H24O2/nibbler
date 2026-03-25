@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 02:07:40 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:49:56 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:38:15 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,23 +33,23 @@ int main(int argc, char **argv)
 
 	std::shared_ptr<IFormatter> formatter = std::make_shared<DefaultFormatter>();
 	std::shared_ptr<ISink> consoleSink = std::make_shared<ConsoleSink>(formatter);
-	LoggerFactory::instance().addConfigurator([&consoleSink, &options](Logger& logger) {
+	LoggerFactory::Instance().AddConfigurator([&consoleSink, &options](Logger& logger) {
 		if (options->verbosity == 2)
-			logger.setLevel(LogLevel::Trace);
+			logger.SetLevel(LogLevel::Trace);
 		else if (options->verbosity == 1)
-			logger.setLevel(LogLevel::Debug);
+			logger.SetLevel(LogLevel::Debug);
 		else
-			logger.setLevel(LogLevel::Info);
+			logger.SetLevel(LogLevel::Info);
 
-		logger.addSink(consoleSink);
+		logger.AddSink(consoleSink);
 	});
-	LoggerFactory::instance().reconfigure();
+	LoggerFactory::Instance().Reconfigure();
 
 	std::string_view modeName = std::visit([]<typename T>(const T&) -> std::string_view {
 		return T::modeName;
 	}, options->modeOptions);
 
-	logger.info().emit("Launching {} mode", modeName);
+	logger.Info().Emit("Launching {} mode", modeName);
 
 	std::visit([&]<typename T>(const T& target) {
 		target.CallEntrypoint(*options);

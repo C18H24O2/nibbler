@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:50:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:49:20 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:34:23 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,31 +36,31 @@ public:
 	explicit Logger(std::string_view name, std::source_location loc = std::source_location::current());
 	virtual ~Logger() noexcept;
 
-	void addSink(std::shared_ptr<ISink> sink);
-	void clearSinks();
+	void AddSink(std::shared_ptr<ISink> sink);
+	void ClearSinks();
 
-	void setLevel(LogLevel logLevel) noexcept;
-	[[nodiscard]] LogLevel getLevel() const noexcept;
+	void SetLevel(LogLevel logLevel) noexcept;
+	[[nodiscard]] LogLevel GetLevel() const noexcept;
 
-	[[nodiscard]] std::string_view getName() const noexcept;
-	[[nodiscard]] std::source_location getLocation() const noexcept;
-	[[nodiscard]] std::string_view getNibblerModule() const noexcept;
+	[[nodiscard]] std::string_view GetName() const noexcept;
+	[[nodiscard]] std::source_location GetLocation() const noexcept;
+	[[nodiscard]] std::string_view GetNibblerModule() const noexcept;
 
 	template <typename... Args>
-	void log(LogLevel logLevel, std::source_location loc, std::format_string<Args...> fmt, Args&&... args) noexcept
+	void Log(LogLevel logLevel, std::source_location loc, std::format_string<Args...> fmt, Args&&... args) noexcept
 	{
-		log(nullptr, logLevel, loc, fmt, std::forward<Args>(args)...);
+		Log(nullptr, logLevel, loc, fmt, std::forward<Args>(args)...);
 	}
 
 	template <typename... Args>
-	void log(
+	void Log(
 		LogMarker* marker,
 		LogLevel logLevel,
 		std::source_location loc,
 		std::format_string<Args...> fmt,
 		Args&&... args
 	) noexcept {
-		if (logLevel.getPriority() < minLogLevel.load(std::memory_order_relaxed).getPriority())
+		if (logLevel.GetPriority() < minLogLevel.load(std::memory_order_relaxed).GetPriority())
 			return;
 
 		LogRecord record {
@@ -74,7 +74,7 @@ public:
 
 		std::shared_lock lock(sinkMutex);
 		for (auto& sink : sinks)
-			sink->write(*this, record);
+			sink->Write(*this, record);
 	}
 
 private:
@@ -89,9 +89,9 @@ private:
 			LogMarker* marker = nullptr;
 
 			template <typename... Args>
-			void emit(std::format_string<Args...> fmt, Args&&... args) noexcept
+			void Emit(std::format_string<Args...> fmt, Args&&... args) noexcept
 			{
-				logger.log(marker, level, loc, fmt, std::forward<Args>(args)...);
+				logger.Log(marker, level, loc, fmt, std::forward<Args>(args)...);
 			}
 		};
 
@@ -100,14 +100,14 @@ private:
 	};
 
 public:
-	LogProxy trace { *this, LogLevel::Trace };
-	LogProxy debug { *this, LogLevel::Debug };
-	LogProxy info  { *this, LogLevel::Info  };
-	LogProxy warn  { *this, LogLevel::Warn  };
-	LogProxy error { *this, LogLevel::Error };
-	LogProxy fatal { *this, LogLevel::Fatal };
+	LogProxy Trace { *this, LogLevel::Trace };
+	LogProxy Debug { *this, LogLevel::Debug };
+	LogProxy Info  { *this, LogLevel::Info  };
+	LogProxy Warn  { *this, LogLevel::Warn  };
+	LogProxy Error { *this, LogLevel::Error };
+	LogProxy Fatal { *this, LogLevel::Fatal };
 
-	void flush() noexcept;
+	void Flush() noexcept;
 
 private:
 	std::string name;

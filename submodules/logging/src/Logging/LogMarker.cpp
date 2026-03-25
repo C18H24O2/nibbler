@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 02:57:12 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:09:15 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:35:35 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 namespace Nibbler::Logging
 {
 
-std::string LogMarker::getFullName(std::string_view separator) const noexcept
+std::string LogMarker::GetFullName(std::string_view separator) const noexcept
 {
 	if (!parent)
 		return std::string(name);
-	return parent->getFullName(separator) + std::string(separator) + std::string(name);
+	return parent->GetFullName(separator) + std::string(separator) + std::string(name);
 }
 
 }; // namespace Nibbler::Logging

@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 00:17:00 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:49:49 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 16:36:19 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,57 +37,57 @@ Logger::Logger(std::string_view name, std::source_location loc)
 	}
 	this->nibblerModule = nibblerModule;
 
-	LoggerFactory::instance().registerLogger(*this);
+	LoggerFactory::Instance().RegisterLogger(*this);
 }
  
 Logger::~Logger() noexcept
 {
-	if (LoggerFactory::isAlive())
-		LoggerFactory::instance().unregisterLogger(*this);
+	if (LoggerFactory::IsAlive())
+		LoggerFactory::Instance().UnregisterLogger(*this);
 }
 
-std::string_view Logger::getName() const noexcept
+std::string_view Logger::GetName() const noexcept
 {
 	return name;
 }
  
-std::source_location Logger::getLocation() const noexcept
+std::source_location Logger::GetLocation() const noexcept
 {
 	return loc;
 }
 
-std::string_view Logger::getNibblerModule() const noexcept
+std::string_view Logger::GetNibblerModule() const noexcept
 {
 	return nibblerModule;
 }
  
-void Logger::addSink(std::shared_ptr<ISink> sink)
+void Logger::AddSink(std::shared_ptr<ISink> sink)
 {
 	std::unique_lock lock(sinkMutex);
 	sinks.push_back(std::move(sink));
 }
  
-void Logger::clearSinks()
+void Logger::ClearSinks()
 {
 	std::unique_lock lock(sinkMutex);
 	sinks.clear();
 }
  
-void Logger::setLevel(LogLevel logLevel) noexcept
+void Logger::SetLevel(LogLevel logLevel) noexcept
 {
 	minLogLevel.store(logLevel, std::memory_order_relaxed);
 }
  
-LogLevel Logger::getLevel() const noexcept
+LogLevel Logger::GetLevel() const noexcept
 {
 	return minLogLevel.load(std::memory_order_relaxed);
 }
  
-void Logger::flush() noexcept
+void Logger::Flush() noexcept
 {
 	std::shared_lock lock(sinkMutex);
 	for (auto& sink : sinks)
-		sink->flush();
+		sink->Flush();
 }
 
 Logger::LogProxy::CallSite Logger::LogProxy::operator()(std::source_location loc) noexcept
