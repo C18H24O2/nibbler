@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:06:26 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:00:45 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:05:40 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 #include <array>
 #include <charconv>
 #include <cstring>
-#include <cstdint>
 #include <getopt.h>
 #include <optional>
 #include <span>
 #include <string_view>
 #include <variant>
+#include <print>
 
 #include <Nibbler/Launcher/LaunchArgument.hpp>
 #include <Nibbler/Launcher/Options/ClientOptions.hpp>
