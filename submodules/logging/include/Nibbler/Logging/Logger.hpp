@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:50:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:42:56 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:49:20 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ public:
 		std::format_string<Args...> fmt,
 		Args&&... args
 	) noexcept {
-		if (logLevel < minLogLevel.load(std::memory_order_relaxed))
+		if (logLevel.getPriority() < minLogLevel.load(std::memory_order_relaxed).getPriority())
 			return;
 
 		LogRecord record {
@@ -80,24 +80,19 @@ public:
 private:
 	struct LogProxy {
 		Logger& logger;
-		LogLevel level;
-
-		template <typename... Args>
-		struct Caller {
-			Caller(Logger& logger, LogLevel level, std::source_location loc,
-				   std::format_string<Args...> fmt, Args&&... args) noexcept
-			{ logger.log(level, loc, fmt, std::forward<Args>(args)...); }
-		};
+		const LogLevel& level;
 
 		struct CallSite {
 			Logger& logger;
-			LogLevel level;
+			const LogLevel& level;
 			std::source_location loc;
 			LogMarker* marker = nullptr;
 
 			template <typename... Args>
 			void emit(std::format_string<Args...> fmt, Args&&... args) noexcept
-			{ logger.log(marker, level, loc, fmt, std::forward<Args>(args)...); }
+			{
+				logger.log(marker, level, loc, fmt, std::forward<Args>(args)...);
+			}
 		};
 
 		CallSite operator()(std::source_location loc = std::source_location::current()) noexcept;

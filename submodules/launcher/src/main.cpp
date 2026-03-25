@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 02:07:40 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:05:48 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:49:56 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,8 @@ int main(int argc, char **argv)
 
 	logger.info().emit("Launching {} mode", modeName);
 
+	std::visit([&]<typename T>(const T& target) {
+		target.CallEntrypoint(*options);
+	}, options->modeOptions);
 	return 0;
 }

@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 02:07:36 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/10 11:26:58 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/25 04:15:01 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,14 +42,12 @@ endif
 all: $(TARGET)
 
 $(TARGET): $(TARGET_DEPS)
-	@$(call taskStart)
-	@printf "Linking $(BOLD)$(TARGET_NAME)$(RESET)\n"
+	@$(call taskStart,Linking $(BOLD)$(TARGET_NAME)$(RESET)\n)
 	@$(CXX) -o $@ $^ $(LDFLAGS)
 	@echo "$(TARGET): $^ $(PROJECT_ROOT)/$(MODULES_DIR)/$(CURRENT_MODULE)/Makefile" > $(DEP_DIR)/module.d
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@$(call taskStart)
-	@printf "Compiling $(BOLD)$<$(RESET)\n"
+	@$(call taskStart,Compiling $(BOLD)$<$(RESET)\n)
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $(DEP_DIR)/$*.tmp.d)
 	@$(CXX) $(CXXFLAGS) $(DFLAGS) -c $(CWD)/$< -o $@
@@ -58,12 +56,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 
 .PHONY: clean
 clean:
-	@$(call taskStart)
-	@printf "Removing $(BOLD)$(BUILD_DIR)$(RESET)\n"
+	@$(call taskStart,Removing $(BOLD)$(BUILD_DIR)$(RESET)\n)
 	@rm -rf $(BUILD_DIR)
 
 .PHONY: fclean
 fclean: clean
-	@$(call taskStart)
-	@printf "Removing $(BOLD)$(TARGET)$(RESET)\n"
+	@$(call taskStart,Removing $(BOLD)$(TARGET)$(RESET)\n)
 	@rm -f $(TARGET)

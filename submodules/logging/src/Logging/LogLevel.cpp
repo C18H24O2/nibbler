@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:51:11 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:47:10 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:43:49 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,6 @@ const LogLevel LogLevel::Info(300, "INFO");
 const LogLevel LogLevel::Warn(400, "WARN");
 const LogLevel LogLevel::Error(500, "ERROR");
 const LogLevel LogLevel::Fatal(600, "FATAL");
-const LogLevel LogLevel::Off(std::numeric_limits<uint16_t>::max(), "Off");
+const LogLevel LogLevel::Off(std::numeric_limits<uint16_t>::max(), "OFF");
 
 }; // namespace Nibbler::Logging

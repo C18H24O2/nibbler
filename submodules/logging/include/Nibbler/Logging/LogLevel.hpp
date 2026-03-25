@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:48:47 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 00:48:27 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:46:22 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,4 @@ private:
 	std::string_view name;
 };
  
-#ifndef LOG_MIN_LEVEL
-	#define LOG_MIN_LEVEL LogLevel::Info
-#endif
-
 }; // namespace Nibbler::Logging

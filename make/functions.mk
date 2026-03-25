@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/07 16:35:38 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/08 20:46:23 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/25 04:14:07 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,4 +21,4 @@ padded = $(shell printf "%$(MAX_MODULE_NAME_WIDTH)s" "$(1)")
 
 provideModuleOutputFile = $(if $(filter $(FINAL_MODULE),$(1)),$(1).out,libnibbler$(1).so)
 provideModuleOutput = $(SHARED_BUILD_DIR)/$(1)/$(call provideModuleOutputFile,$(1))
-taskStart = printf "$(BRED)$(call padded,$(CURRENT_MODULE))$(RESET)$(BBLACK) | $(RESET)"
+taskStart = printf "$(BRED)$(call padded,$(CURRENT_MODULE))$(RESET)$(BBLACK) | $(RESET)$(1)"

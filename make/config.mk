@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/07 16:36:43 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/25 00:55:55 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/25 04:12:24 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ OBJ_DIR := $(BUILD_DIR)/obj
 DEP_DIR := $(BUILD_DIR)/dep
 
 FINAL_MODULE := launcher
-MODULES := $(FINAL_MODULE) core ui-mlx logging
+MODULES := $(FINAL_MODULE) core ui-mlx logging game-client game-standalone game-server
 
 include $(PROJECT_ROOT)/make/functions.mk
 

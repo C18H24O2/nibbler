@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:08:57 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/21 20:58:43 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:24:20 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ struct ClientOptions
 		{'p', "port", "Port to connect to", &ClientOptions::port},
 		{'u', "username", "Username to use", &ClientOptions::username}
 	});
+
+	void CallEntrypoint(Launcher::LaunchOptions& options) const noexcept;
 };
 
 }; // namespace Nibbler

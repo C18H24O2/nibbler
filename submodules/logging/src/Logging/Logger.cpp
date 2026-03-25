@@ -6,11 +6,10 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/23 00:17:00 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 03:51:41 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:49:49 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
 #include <filesystem>
 #include <Nibbler/Logging/Logger.hpp>
 #include <Nibbler/Logging/LoggerFactory.hpp>
@@ -23,8 +22,8 @@ Logger::Logger(std::string_view name, std::source_location loc)
 	this->name = name;
 	this->loc = loc;
 	auto filepath = std::filesystem::path(loc.file_name());
+
 	std::string nibblerModule = "unknown module";
-	// find a "submodule/<module>" directory in the path
 	bool next = false;
 	for (auto& part : filepath.relative_path())
 	{
@@ -37,12 +36,14 @@ Logger::Logger(std::string_view name, std::source_location loc)
 		}
 	}
 	this->nibblerModule = nibblerModule;
+
 	LoggerFactory::instance().registerLogger(*this);
 }
  
 Logger::~Logger() noexcept
 {
-	LoggerFactory::instance().unregisterLogger(*this);
+	if (LoggerFactory::isAlive())
+		LoggerFactory::instance().unregisterLogger(*this);
 }
 
 std::string_view Logger::getName() const noexcept

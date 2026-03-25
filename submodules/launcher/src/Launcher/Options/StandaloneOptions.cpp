@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   StandaloneOptions.hpp                              :+:      :+:    :+:   */
+/*   StandaloneOptions.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 01:08:47 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:22:02 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/25 04:23:23 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/25 04:23:42 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-
-#include <array>
 #include <Nibbler/Launcher/LaunchOptions.hpp>
+#include <Nibbler/Standalone/entrypoint.hpp>
 
 namespace Nibbler::Launcher
 {
 
-struct StandaloneOptions
+void StandaloneOptions::CallEntrypoint(Launcher::LaunchOptions& options) const noexcept
 {
-	static constexpr std::string_view modeName = "standalone";
-	static constexpr std::array<LaunchArgument<StandaloneOptions>, 0> arguments{};
-
-	void CallEntrypoint(Launcher::LaunchOptions& options) const noexcept;
-};
+	Standalone::Entrypoint(options);
+}
 
 }; // namespace Nibbler

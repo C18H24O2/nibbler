@@ -6,7 +6,7 @@
 #    By: kiroussa <contact@dynamicdispat.ch>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 01:44:00 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/25 04:04:51 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/25 04:16:02 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,8 @@ $(1)_$(2):
 endef
 
 .PHONY: all
-all: $(EXECUTABLE)
+all:
+	@$(MAKE) -j$(shell nproc) $(EXECUTABLE)
 
 include $(shell find $(SHARED_BUILD_DIR) -type f -name '*.d' 2>/dev/null)
 
@@ -43,8 +44,7 @@ $(SHARED_BUILD_DIR)/%:
 	fi
 
 $(EXECUTABLE): $(FINAL_MODULE_OUTPUT)
-	@$(call taskStart)
-	@printf "Linking $(BOLD)$<$(RESET) to $(BOLD)$@$(RESET)\n"
+	@$(call taskStart,Linking $(BOLD)$<$(RESET) to $(BOLD)$@$(RESET)\n)
 	@ln -sf $< $@
 
 $(foreach module,$(MODULES),$(eval $(call moduleOutput,$(module))))
@@ -53,20 +53,17 @@ $(foreach module,$(MODULES),$(eval $(call moduleDelegate,fclean,$(module))))
 
 .PHONY: clean
 clean: # $(MODULES:%=clean_%)
-	@$(call taskStart)
-	@printf "Removing build directory $(BOLD)$(SHARED_BUILD_DIR)/$(RESET)\n"
+	@$(call taskStart,Removing build directory $(BOLD)$(SHARED_BUILD_DIR)/$(RESET)\n)
 	@rm -rf $(SHARED_BUILD_DIR)
 
 .PHONY: fclean
 fclean: clean # $(MODULES:%=fclean_%)
-	@$(call taskStart)
-	@printf "Removing executable $(BOLD)$(EXECUTABLE)$(RESET)\n"
+	@$(call taskStart,Removing executable $(BOLD)$(EXECUTABLE)$(RESET)\n)
 	@rm -f $(EXECUTABLE)
 
 .PHONY: compile_commands.json
 compile_commands.json: fclean
-	@$(call taskStart)
-	@printf "Generating $(BOLD)$@$(RESET)\n"
+	@$(call taskStart,Generating $(BOLD)$@$(RESET)\n)
 	@bear -- $(MAKE) -j$(shell nproc)
 
 .PHONY: re

@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:06:26 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:05:40 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:22:37 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@
 #include <print>
 
 #include <Nibbler/Launcher/LaunchArgument.hpp>
+
+namespace Nibbler::Launcher
+{
+struct LaunchOptions;
+}; // namespace Nibbler::Launcher
+
 #include <Nibbler/Launcher/Options/ClientOptions.hpp>
 #include <Nibbler/Launcher/Options/ServerOptions.hpp>
 #include <Nibbler/Launcher/Options/StandaloneOptions.hpp>
