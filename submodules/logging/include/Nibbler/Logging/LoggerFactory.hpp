@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:12:24 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:40:09 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/25 04:57:03 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,7 @@
 #include <atomic>
 #include <functional>
 #include <shared_mutex>
-#include <string>
 #include <string_view>
-#include <unordered_map>
 #include <vector>
 
 #include <Nibbler/Util/NonCopyable.hpp>
@@ -43,6 +41,9 @@ public:
 
 	Logger* get(std::string_view name);
 
+	// This is used to check whether the LoggerFactory's singleton has been destroyed
+	// by the dynamic loader and prevent Loggers from trying to access it, causing,
+	// among other things, a segmentation fault. :3
 	static bool isAlive() noexcept;
 
 private:
