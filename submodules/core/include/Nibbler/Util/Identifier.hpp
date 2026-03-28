@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 16:27:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 11:37:24 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/28 11:44:03 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,10 @@ public:
 	[[nodiscard]] static constexpr std::expected<Identifier, IdentifierError>
 		From(std::string_view ns, std::string_view path)
 	{
-		if (ns.empty())   return std::unexpected(IdentifierError::EmptyNamespace);
-		if (path.empty()) return std::unexpected(IdentifierError::EmptyPath);
+		if (ns.empty())
+			return std::unexpected(IdentifierError::EmptyNamespace);
+		if (path.empty())
+			return std::unexpected(IdentifierError::EmptyPath);
 		if (ns.size() > MAX_NAMESPACE_LENGTH)
 			return std::unexpected(IdentifierError::NamespaceTooLong);
 		if (!IsValidNamespace(ns))
@@ -64,10 +66,14 @@ public:
 	{
 		const std::size_t sep = combined.find(':');
 
-		if (sep == std::string_view::npos)					 return std::unexpected(IdentifierError::MissingSeparator);
-		if (sep == 0)										  return std::unexpected(IdentifierError::EmptyNamespace);
-		if (sep == combined.size() - 1)						return std::unexpected(IdentifierError::EmptyPath);
-		if (combined.find(':', sep + 1) != std::string_view::npos) return std::unexpected(IdentifierError::PathInvalidCharacter);
+		if (sep == std::string_view::npos)
+			return std::unexpected(IdentifierError::MissingSeparator);
+		if (sep == 0)
+			return std::unexpected(IdentifierError::EmptyNamespace);
+		if (sep == combined.size() - 1)
+			return std::unexpected(IdentifierError::EmptyPath);
+		if (combined.find(':', sep + 1) != std::string_view::npos)
+			return std::unexpected(IdentifierError::PathInvalidCharacter);
 
 		return From(combined.substr(0, sep), combined.substr(sep + 1));
 	}
