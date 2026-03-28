@@ -6,19 +6,20 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:08:57 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:24:20 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/27 23:53:52 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <array>
-#include <Nibbler/Launcher/LaunchOptions.hpp>
+
+#include <Nibbler/Launcher/Suboptions.hpp>
 
 namespace Nibbler::Launcher
 {
 
-struct ClientOptions
+struct ClientOptions: public Suboptions
 {
 	std::string host;
 	int port;
@@ -34,4 +35,4 @@ struct ClientOptions
 	void CallEntrypoint(Launcher::LaunchOptions& options) const noexcept;
 };
 
-}; // namespace Nibbler
+}; // namespace Nibbler::Launcher

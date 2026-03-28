@@ -6,18 +6,20 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:06:26 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 17:10:19 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/28 00:44:03 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <array>
+#include <bit>
 #include <charconv>
 #include <cstring>
 #include <getopt.h>
 #include <optional>
 #include <span>
+#include <tuple>
 #include <string_view>
 #include <variant>
 #include <print>
@@ -32,6 +34,8 @@ struct LaunchOptions;
 #include <Nibbler/Launcher/Options/ClientOptions.hpp>
 #include <Nibbler/Launcher/Options/ServerOptions.hpp>
 #include <Nibbler/Launcher/Options/StandaloneOptions.hpp>
+
+#include <Nibbler/Launcher/Suboptions.hpp>
 
 namespace Nibbler::Launcher
 {
@@ -62,7 +66,7 @@ struct TupleToVariant<std::tuple<Ts...>> {
 
 using OptionsVariant = typename TupleToVariant<AllOptions>::type;
 
-struct LaunchOptions
+struct LaunchOptions: public Suboptions
 {
 private:
 	template <typename T, std::size_t N>
@@ -95,8 +99,7 @@ private:
 		}
 	};
 public:
-	bool help;
-	int verbosity;
+	constexpr LaunchOptions(OptionsVariant modeOptions) noexcept : modeOptions(modeOptions) {}
 	OptionsVariant modeOptions;
 
 	[[nodiscard]] static std::optional<LaunchOptions> Parse(int argc, char **argv) noexcept;
@@ -119,7 +122,14 @@ public:
 			if (opt == ':' || opt == '?')
 			{
 				if (opt == '?')
-					std::println(stderr, "{}: invalid option -- '{}'", args[0], (char)optopt);
+				{
+					std::string_view optionStr;
+					if (optopt)
+						optionStr = std::string_view((char *) &optopt, 1);
+					else
+						optionStr = std::string_view(argv[optind - 1]).substr(2);
+					std::println(stderr, "{}: invalid option -- '{}'", args[0], optionStr);
+				}
 				if (opt == ':')
 					std::println(stderr, "{}: option requires an argument -- '{}'", args[0], (char)optopt);
 				std::println(stderr, "Try '{} --help' for more information.", args[0]);
@@ -132,7 +142,7 @@ public:
 					continue;
 
 				if (arg.modifierFn)
-					arg.modifierFn(target);
+					arg.modifierFn(&target);
 				else
 				{
 					std::visit([&](auto fieldPtr) {
@@ -167,19 +177,36 @@ public:
 		return true;
 	}
 
+	template<typename T, typename Base, typename Variant>
+	static auto CastFieldPtr(const Variant& v)
+	{
+		return std::visit([](auto ptr) -> typename LaunchArgument<T>::FieldPtr
+		{
+			using Field = std::remove_reference_t<decltype(((Base*)nullptr)->*ptr)>;
+			return static_cast<Field T::*>(ptr);
+		}, v);
+	}
+
 	template<typename T>
 	static std::optional<OptionsVariant> ParseMode(std::span<char*>& args) noexcept
 	{
+		constexpr std::size_t N = std::tuple_size_v<decltype(T::arguments)>;
+		constexpr std::size_t M = std::tuple_size_v<decltype(builtinArguments)>;
+		std::array<LaunchArgument<T>, N + M> arguments{};
+		std::copy(T::arguments.begin(), T::arguments.end(), arguments.begin());
+		size_t i = 0;
+		for (auto&& arg : builtinArguments)
+		{
+			auto newPtr = CastFieldPtr<T, Suboptions>(arg.fieldPtr);
+			auto newArg = LaunchArgument<T>{arg.shortName, arg.longName, arg.description, newPtr, arg.requiresArg, arg.modifierFn};
+			arguments[N + i++] = newArg;
+		}
+
 		T target{};
-		if (PartialParse(args, target, T::arguments))
+		if (PartialParse(args, target, arguments))
 			return target;
 		return std::nullopt;
 	}
 };
-
-inline constexpr auto builtinArguments = std::to_array<LaunchArgument<LaunchOptions>>({
-	{'d', "verbose", "Increase verbosity", &LaunchOptions::verbosity, false, [](auto& opt){ opt.verbosity++; }},
-	{'h', "help", "Display this help message", &LaunchOptions::help},
-});
 
 }; // namespace Nibbler

@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 02:07:36 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/25 16:43:38 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/27 23:34:56 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,11 @@ all: $(TARGET)
 
 $(TARGET): $(TARGET_DEPS)
 	@$(call taskStart,Linking $(BOLD)$(TARGET_NAME)$(RESET)\n)
+ifeq ($(MODULE_NAME),$(FINAL_MODULE))
+	@$(CXX) -o $@ $(OBJS) $(LIB_MODULES_NOPLUG_OUTPUT) $(LDFLAGS)
+else
 	@$(CXX) -o $@ $^ $(LDFLAGS)
+endif
 	@echo "$(TARGET): $^ $(PROJECT_ROOT)/$(MODULES_DIR)/$(CURRENT_MODULE)/Makefile" > $(DEP_DIR)/module.d
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp

@@ -1,36 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   LaunchArgument.hpp                                 :+:      :+:    :+:   */
+/*   Window.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 03:05:51 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 00:43:39 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/25 15:59:31 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/27 20:16:47 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <string>
-#include <string_view>
-#include <variant>
+#include <Nibbler/Util/Canonical.hpp>
 
-template<typename T>
-struct LaunchArgument
+namespace Nibbler::Client::Window
 {
-	char shortName;
-	std::string_view longName;
-	std::string_view description;
 
-	using FieldPtr = std::variant<
-		std::string T::*,
-		int			T::*,
-		bool		T::*,
-		double		T::*
-	>;
+class Window
+{
+	public:
+		DEFAULT_CANONICAL_MEMBERS(Window);
 
-	FieldPtr fieldPtr;
-	bool requiresArg = false;
-	void (*modifierFn)(void *) = nullptr;
+		[[nodiscard]] virtual std::string Title() const = 0;
+		[[nodiscard]] virtual int Width() const = 0;
+		[[nodiscard]] virtual int Height() const = 0;
+
+	protected:
+		Window() = default;
 };
+
+}; // namespace Nibbler::Client::Window

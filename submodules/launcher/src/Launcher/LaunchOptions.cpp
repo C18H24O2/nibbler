@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 01:13:04 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:32:30 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/28 00:13:36 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,22 @@
 namespace Nibbler::Launcher
 {
 
-constexpr void PrintUsage(bool help)
+constexpr void PrintUsage(bool help, std::string_view modeName = "")
 {
 	std::FILE *const stream = help ? stdout : stderr;
 
-	std::string optionNames;
-	ForEachOptionsType<AllOptions>([&optionNames]<typename T>() {
-		if (!optionNames.empty())
-			optionNames += "|";
-		optionNames += T::modeName;
-	});
-	std::println(stream, "Usage: nibbler [{}] [options...]", optionNames);
+	if (!modeName.empty())
+		std::println(stream, "Usage: nibbler {} [options...]", modeName);
+	else
+	{
+		std::string optionNames;
+		ForEachOptionsType<AllOptions>([&optionNames]<typename T>() {
+			if (!optionNames.empty())
+				optionNames += "|";
+			optionNames += T::modeName;
+		});
+		std::println(stream, "Usage: nibbler [{}] [options...]", optionNames);
+	}
 
 	if (help)
 	{
@@ -40,8 +45,10 @@ constexpr void PrintUsage(bool help)
 				maxNameSize = std::max(maxNameSize, arg.longName.size());
 		});
 
-		ForEachOptionsType<AllOptions>([stream, maxNameSize]<typename T>() {
+		ForEachOptionsType<AllOptions>([modeName, stream, maxNameSize]<typename T>() {
 			if (T::arguments.empty())
+				return;
+			if (modeName != T::modeName && !modeName.empty())
 				return;
 			std::string name(T::modeName);
 			name[0] = std::toupper(name[0]);
@@ -71,8 +78,8 @@ std::optional<LaunchOptions> LaunchOptions::Parse(int argc, char **argv) noexcep
 {
 	std::span<char*> args(argv, argc);
 
-	LaunchOptions options{false, 0, StandaloneOptions{}};
-	if (!PartialParse(args, options, builtinArguments))
+	LaunchOptions options{StandaloneOptions{}};
+	if (!PartialParse<Suboptions>(args, options, builtinArguments))
 		return std::nullopt;
 	if (options.help)
 	{
@@ -106,6 +113,15 @@ std::optional<LaunchOptions> LaunchOptions::Parse(int argc, char **argv) noexcep
 	});
 	if (!modeOptions)
 		return std::nullopt;
+
+	std::visit([&options]<typename T>(const T& target) {
+		static_cast<Suboptions&>(options) = static_cast<const Suboptions&>(target);
+	}, *modeOptions);
+	if (options.help)
+	{
+		PrintUsage(true, mode);
+		return std::nullopt;
+	}
 
 	options.modeOptions = *modeOptions;
 	return options;

@@ -1,36 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   LaunchArgument.hpp                                 :+:      :+:    :+:   */
+/*   Environment.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 03:05:51 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 00:43:39 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/28 11:35:27 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/28 11:35:45 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <string>
-#include <string_view>
-#include <variant>
-
-template<typename T>
-struct LaunchArgument
+namespace Nibbler::Plugin
 {
-	char shortName;
-	std::string_view longName;
-	std::string_view description;
 
-	using FieldPtr = std::variant<
-		std::string T::*,
-		int			T::*,
-		bool		T::*,
-		double		T::*
-	>;
-
-	FieldPtr fieldPtr;
-	bool requiresArg = false;
-	void (*modifierFn)(void *) = nullptr;
+enum class Environment
+{
+	Client,
+	Server,
+	Standalone
 };
+
+}; // namespace Nibbler::Plugin

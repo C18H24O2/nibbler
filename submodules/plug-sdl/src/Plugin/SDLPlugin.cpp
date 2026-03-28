@@ -1,36 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   LaunchArgument.hpp                                 :+:      :+:    :+:   */
+/*   SDLPlugin.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 03:05:51 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 00:43:39 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/28 00:53:24 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/28 11:37:41 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include <Nibbler/Logging/Logger.hpp>
+#include <Nibbler/Plugins/SDL/SDLPlugin.hpp>
 
-#include <string>
-#include <string_view>
-#include <variant>
-
-template<typename T>
-struct LaunchArgument
+namespace Nibbler::Plugins::SDL
 {
-	char shortName;
-	std::string_view longName;
-	std::string_view description;
 
-	using FieldPtr = std::variant<
-		std::string T::*,
-		int			T::*,
-		bool		T::*,
-		double		T::*
-	>;
+Logging::Logger logger("Plugins::SDL");
 
-	FieldPtr fieldPtr;
-	bool requiresArg = false;
-	void (*modifierFn)(void *) = nullptr;
+void SDLPlugin::Init(PluginSystem& system)
+{
+	logger.Info().Emit("Initializing SDL plugin");
+}
+
+void SDLPlugin::Shutdown()
+{
+	logger.Info().Emit("Shutting down...");
+}
+
 };
+
+PLUGIN_DECLARE(Nibbler::Plugins::SDL::SDLPlugin)

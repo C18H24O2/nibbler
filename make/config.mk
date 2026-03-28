@@ -6,13 +6,17 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/07 16:36:43 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/25 16:42:59 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/03/27 23:34:50 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 EXECUTABLE := nibbler
 MAKE := make --debug=none --no-print-directory
 CWD := $(shell pwd)
+
+ifndef PROJECT_ROOT
+$(error PROJECT_ROOT is not set)
+endif
 
 CXX := clang++
 CXXFLAGS := -Wall -Wextra -std=c++23 -fPIC
@@ -36,15 +40,21 @@ OBJ_DIR := $(BUILD_DIR)/obj
 DEP_DIR := $(BUILD_DIR)/dep
 
 FINAL_MODULE := launcher
-MODULES := $(FINAL_MODULE) core ui-mlx logging game-client game-standalone game-server
+MODULES := $(shell find $(PROJECT_ROOT)/$(MODULES_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | LC_ALL=C sort 2>/dev/null)
 
 include $(PROJECT_ROOT)/make/functions.mk
+
+PLUGIN_MODULES := $(filter plug-%,$(MODULES))
 
 FINAL_MODULE_OUTPUT := $(call provideModuleOutput,$(FINAL_MODULE))
 LIB_MODULES := $(filter-out $(FINAL_MODULE),$(MODULES))
 LIB_MODULES_OUTPUT := $(foreach module,$(LIB_MODULES),$(call provideModuleOutput,$(module)))
+LIB_MODULES_NOPLUG := $(filter-out $(PLUGIN_MODULES),$(LIB_MODULES))
+LIB_MODULES_NOPLUG_OUTPUT := $(foreach module,$(LIB_MODULES_NOPLUG),$(call provideModuleOutput,$(module)))
+
 
 CXXFLAGS += -I$(PROJECT_ROOT)/$(MODULES_DIR)/$(CURRENT_MODULE)/$(INC_DIR)
 
 LIB_MODULES_OTHER := $(filter-out $(CURRENT_MODULE),$(MODULES))
-CXXFLAGS += $(LIB_MODULES_OTHER:%=-I$(PROJECT_ROOT)/$(MODULES_DIR)/%/$(INC_DIR))
+NO_PLUGINS_MODULES := $(filter-out $(PLUGIN_MODULES),$(MODULES))
+CXXFLAGS += $(NO_PLUGINS_MODULES:%=-I$(PROJECT_ROOT)/$(MODULES_DIR)/%/$(INC_DIR))

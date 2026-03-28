@@ -1,18 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ClientWindow.hpp                                   :+:      :+:    :+:   */
+/*   PluginSystem.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/25 15:59:31 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:30:01 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/03/28 00:49:55 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/03/28 11:35:56 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-namespace Nibbler::Client::Window
+#include <Nibbler/Util/Canonical.hpp>
+#include <Nibbler/Util/Identifier.hpp>
+
+#include <Nibbler/Plugin/Environment.hpp>
+#include <Nibbler/Plugin/Plugin.hpp>
+
+namespace Nibbler::Plugin
 {
 
-}; // namespace Nibbler::Client::Window
+class PluginSystem
+{
+public:
+	
+};
+
+}; // namespace Nibbler::Plugin
