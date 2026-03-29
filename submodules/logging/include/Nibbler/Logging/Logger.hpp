@@ -6,13 +6,14 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:50:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:34:23 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/28 17:46:51 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <atomic>
+#include <filesystem>
 #include <format>
 #include <memory>
 #include <mutex>
@@ -25,6 +26,7 @@
 #include <Nibbler/Logging/ISink.hpp>
 #include <Nibbler/Logging/LogLevel.hpp>
 #include <Nibbler/Logging/LogRecord.hpp>
+#include <Nibbler/Logging/LoggerFactory.hpp>
 #include <Nibbler/Util/NonCopyable.hpp>
 #include <Nibbler/Util/NonMovable.hpp>
 
@@ -33,18 +35,69 @@ namespace Nibbler::Logging
 
 class Logger final : private Util::NonCopyable, private Util::NonMovable {
 public:
-	explicit Logger(std::string_view name, std::source_location loc = std::source_location::current());
-	virtual ~Logger() noexcept;
+	explicit constexpr Logger(std::string_view name, std::source_location loc = std::source_location::current()) noexcept
+		: name(name), loc(loc)
+	{
+		auto filepath = std::filesystem::path(loc.file_name());
 
-	void AddSink(std::shared_ptr<ISink> sink);
-	void ClearSinks();
+		std::string nibblerModule = "unknown module";
+		bool next = false;
+		for (auto& part : filepath.relative_path())
+		{
+			if (part == "submodules")
+				next = true;
+			else if (next)
+			{
+				nibblerModule = part.string();
+				break;
+			}
+		}
+		this->nibblerModule = nibblerModule;
+		LoggerFactory::Instance().RegisterLogger(*this);
+	};
 
-	void SetLevel(LogLevel logLevel) noexcept;
-	[[nodiscard]] LogLevel GetLevel() const noexcept;
+	constexpr ~Logger() noexcept
+	{
+		if (LoggerFactory::IsAlive())
+			LoggerFactory::Instance().UnregisterLogger(*this);
+	}
 
-	[[nodiscard]] std::string_view GetName() const noexcept;
-	[[nodiscard]] std::source_location GetLocation() const noexcept;
-	[[nodiscard]] std::string_view GetNibblerModule() const noexcept;
+	constexpr void AddSink(std::shared_ptr<ISink> sink) noexcept
+	{
+		std::unique_lock lock(sinkMutex);
+		sinks.push_back(std::move(sink));
+	}
+
+	constexpr void ClearSinks() noexcept
+	{
+		std::unique_lock lock(sinkMutex);
+		sinks.clear();
+	}
+
+	constexpr void SetLevel(LogLevel logLevel) noexcept
+	{
+		minLogLevel.store(logLevel, std::memory_order_relaxed);
+	}
+
+	[[nodiscard]] constexpr LogLevel GetLevel() const noexcept
+	{
+		return minLogLevel.load(std::memory_order_relaxed);
+	}
+
+	[[nodiscard]] constexpr std::string_view GetName() const noexcept
+	{
+		return name;
+	}
+
+	[[nodiscard]] constexpr std::source_location GetLocation() const noexcept
+	{
+		return loc;
+	}
+
+	[[nodiscard]] constexpr std::string_view GetNibblerModule() const noexcept
+	{
+		return nibblerModule;
+	}
 
 	template <typename... Args>
 	void Log(LogLevel logLevel, std::source_location loc, std::format_string<Args...> fmt, Args&&... args) noexcept
@@ -82,7 +135,8 @@ private:
 		Logger& logger;
 		const LogLevel& level;
 
-		struct CallSite {
+		struct CallSite
+		{
 			Logger& logger;
 			const LogLevel& level;
 			std::source_location loc;
@@ -95,8 +149,14 @@ private:
 			}
 		};
 
-		CallSite operator()(std::source_location loc = std::source_location::current()) noexcept;
-		CallSite operator()(const LogMarker& marker, std::source_location loc = std::source_location::current()) noexcept;
+		[[nodiscard]] constexpr CallSite operator()(std::source_location loc = std::source_location::current()) noexcept
+		{
+			return { logger, level, loc };
+		}
+		[[nodiscard]] constexpr CallSite operator()(const LogMarker& marker, std::source_location loc = std::source_location::current()) noexcept
+		{
+			return { logger, level, loc, const_cast<LogMarker*>(&marker) };
+		}
 	};
 
 public:
@@ -107,7 +167,12 @@ public:
 	LogProxy Error { *this, LogLevel::Error };
 	LogProxy Fatal { *this, LogLevel::Fatal };
 
-	void Flush() noexcept;
+	constexpr void Flush() noexcept
+	{
+		std::shared_lock lock(sinkMutex);
+		for (auto& sink : sinks)
+			sink->Flush();
+	}
 
 private:
 	std::string name;

@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 04:09:52 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 04:21:01 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/29 08:35:06 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,6 @@
 namespace Nibbler::Standalone
 {
 
-void Entrypoint(Launcher::LaunchOptions& options);
+int Entrypoint(Launcher::LaunchOptions& options);
 
 };

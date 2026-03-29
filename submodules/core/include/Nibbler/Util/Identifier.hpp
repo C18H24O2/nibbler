@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 16:27:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 11:44:03 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/29 08:43:08 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
  
 #include <compare>
 #include <expected>
+#include <format>
 #include <functional>
 #include <string>
 #include <string_view>
@@ -28,6 +29,7 @@ enum class IdentifierError
 	EmptyNamespace,
 	EmptyPath,
 	MissingSeparator,
+	PathTooLong,
 	PathInvalidCharacter,
 	NamespaceTooLong,
 	NamespaceInvalidCharacter,
@@ -51,14 +53,10 @@ public:
 			return std::unexpected(IdentifierError::NamespaceInvalidCharacter);
 		if (path.find(SEPARATOR) != std::string_view::npos)
 			return std::unexpected(IdentifierError::PathInvalidCharacter);
+		if (ns.size() + SEPARATOR.size() + path.size() > MAX_TOTAL_LENGTH)
+			return std::unexpected(IdentifierError::PathTooLong);
 
-		std::string result;
-		result.reserve(ns.size() + SEPARATOR.size() + path.size());
-		result.append(ns);
-		result.append(SEPARATOR);
-		result.append(path);
-
-		return Identifier(std::move(result), ns.size());
+		return Identifier(ns, path);
 	}
 
 	[[nodiscard]] static constexpr std::expected<Identifier, IdentifierError>
@@ -80,36 +78,50 @@ public:
 
 	[[nodiscard]] constexpr std::string_view Namespace() const noexcept
 	{
-		return std::string_view(combined).substr(0, separatorIndex);
+		return {buffer.data(), separatorIndex};
 	}
 
 	[[nodiscard]] constexpr std::string_view Path() const noexcept
 	{
-		return std::string_view(combined).substr(separatorIndex + 1);
+		return {buffer.data() + separatorIndex + 1, totalLength - separatorIndex - 1};
 	}
 
 	[[nodiscard]] constexpr std::string_view ToString() const noexcept
 	{
-		return combined;
+		return {buffer.data(), totalLength};
 	}
 
 	[[nodiscard]] constexpr auto operator<=>(const Identifier& other) const noexcept
 	{
-		return combined <=> other.combined;
+		auto result = Namespace() <=> other.Namespace();
+		if (result != 0)
+			return result;
+		return Path() <=> other.Path();
 	}
 
 	[[nodiscard]] constexpr bool operator==(const Identifier& other) const noexcept
 	{
-		return combined == other.combined;
+		return ToString() == other.ToString();
 	}
 
 	static constexpr std::string_view DEFAULT_NAMESPACE = "nibbler";
 	static constexpr std::string_view SEPARATOR = ":";
 	static constexpr std::size_t MAX_NAMESPACE_LENGTH = 64;
+	static constexpr std::size_t MAX_PATH_LENGTH = 256;
+	static constexpr std::size_t MAX_TOTAL_LENGTH = MAX_NAMESPACE_LENGTH + 1 + MAX_PATH_LENGTH;
 
 private:
-	constexpr Identifier(std::string combined_, std::size_t separatorIndex_)
-		: combined(std::move(combined_)), separatorIndex(separatorIndex_) {}
+	constexpr Identifier(std::string_view ns, std::string_view path) noexcept
+	{
+		std::size_t i = 0;
+		for (char c : ns)
+			buffer[i++] = c;
+		buffer[i++] = ':';
+		for (char c : path)
+			buffer[i++] = c;
+		totalLength = i;
+		separatorIndex = ns.size();
+	}
 
 	static constexpr bool IsValidNamespace(std::string_view ns) noexcept
 	{
@@ -126,12 +138,13 @@ private:
 		return true;
 	}
 
-	std::string combined;
-	std::size_t separatorIndex;
+	std::array<char, MAX_TOTAL_LENGTH> buffer{};
+	std::size_t totalLength{};
+	std::size_t separatorIndex{};
 };
- 
+
 }; // namespace Nibbler::Util
- 
+
 template<>
 struct std::hash<Nibbler::Util::Identifier>
 {
@@ -141,3 +154,16 @@ struct std::hash<Nibbler::Util::Identifier>
 	}
 };
  
+template<>
+struct std::formatter<Nibbler::Util::Identifier>
+{
+	constexpr auto parse(std::format_parse_context& ctx)
+	{
+		return ctx.begin();
+	}
+
+	[[nodiscard]] constexpr auto format(const Nibbler::Util::Identifier& id, std::format_context& ctx) const
+	{
+		return std::format_to(ctx.out(), "{}", id.ToString());
+	}
+};

@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:48:47 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:35:35 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/28 14:59:07 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,30 @@ namespace Nibbler::Logging
 class LogLevel final {
 public:
 	DEFAULT_CANONICAL_FINAL_MEMBERS(LogLevel)
-	LogLevel(uint16_t value, std::string_view name) noexcept;	
+	constexpr LogLevel(uint16_t value, std::string_view name) noexcept
+		: priority(value), name(name) {}
  
 	explicit operator bool() const = delete;
  
-	[[nodiscard]] std::string_view GetName() const noexcept;
-	[[nodiscard]] uint16_t GetPriority() const noexcept;
+	[[nodiscard]] constexpr std::string_view GetName() const noexcept
+	{
+		return name;
+	}
+
+	[[nodiscard]] constexpr uint16_t GetPriority() const noexcept
+	{
+		return priority;
+	}
  
-	[[nodiscard]] bool operator==(const LogLevel&) const noexcept;
-	[[nodiscard]] std::strong_ordering operator<=>(const LogLevel& other) const noexcept;
+	[[nodiscard]] constexpr bool operator==(const LogLevel& other) const noexcept
+	{
+		return priority == other.priority;
+	}
+
+	[[nodiscard]] constexpr std::strong_ordering operator<=>(const LogLevel& other) const noexcept
+	{
+		return priority <=> other.priority;
+	}
  
 	static const LogLevel All;
 	static const LogLevel Trace;
@@ -43,10 +58,20 @@ public:
 	static const LogLevel Off;
  
 private:
-	LogLevel() noexcept;
+	constexpr LogLevel() noexcept
+		: priority(0), name("Off") {}
 
 	uint16_t priority;
 	std::string_view name;
 };
+
+inline constexpr LogLevel LogLevel::All{0, "ALL"};
+inline constexpr LogLevel LogLevel::Trace{100, "TRACE"};
+inline constexpr LogLevel LogLevel::Debug{200, "DEBUG"};
+inline constexpr LogLevel LogLevel::Info{300, "INFO"};
+inline constexpr LogLevel LogLevel::Warn{400, "WARN"};
+inline constexpr LogLevel LogLevel::Error{500, "ERROR"};
+inline constexpr LogLevel LogLevel::Fatal{600, "FATAL"};
+inline constexpr LogLevel LogLevel::Off{std::numeric_limits<uint16_t>::max(), "OFF"};
  
 }; // namespace Nibbler::Logging

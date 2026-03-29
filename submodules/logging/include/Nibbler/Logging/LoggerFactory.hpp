@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:12:24 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:34:31 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/29 08:46:03 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,32 +31,66 @@ class LoggerFactory final : private Util::NonCopyable, private Util::NonMovable 
 public:
 	using ConfigureFn = std::function<void(Logger&)>;
 
-	static LoggerFactory& Instance();
+	[[nodiscard]] static constexpr LoggerFactory& Instance() noexcept
+	{
+		static LoggerFactory instance;
+		return instance;
+	}
 
-	void AddConfigurator(ConfigureFn fn);
-	void Reconfigure();
+	constexpr void AddConfigurator(ConfigureFn fn) noexcept
+	{
+		std::unique_lock lock(registryMutex);
+		globalConfigurators.push_back(std::move(fn));
+	}
 
-	void RegisterLogger(Logger& logger);
-	void UnregisterLogger(Logger& logger);
+	constexpr void Reconfigure() noexcept
+	{
+		std::unique_lock lock(registryMutex);
+		for (auto& logger : loggers)
+			ApplyConfigurators(*logger);
+	}
 
-	Logger* Get(std::string_view name);
+	constexpr void RegisterLogger(Logger& logger) noexcept
+	{
+		std::unique_lock lock(registryMutex);
+		loggers.push_back(&logger);
+		ApplyConfigurators(logger);
+	}
+
+	constexpr void UnregisterLogger(Logger& logger) noexcept
+	{
+		std::unique_lock lock(registryMutex);
+		loggers.erase(std::remove(loggers.begin(), loggers.end(), &logger), loggers.end());
+	}
+
+	[[nodiscard]] const Logger* Get(std::string_view name) noexcept;
 
 	// This is used to check whether the LoggerFactory's singleton has been destroyed
 	// by the dynamic loader and prevent Loggers from trying to access it, causing,
 	// among other things, a segmentation fault. :3
-	static bool IsAlive() noexcept;
+	[[nodiscard]] static constexpr bool IsAlive() noexcept
+	{
+		return alive;
+	}
 
 private:
-	LoggerFactory() = default;
-	~LoggerFactory() noexcept;
+	constexpr LoggerFactory() noexcept = default;
+	constexpr ~LoggerFactory() noexcept
+	{
+		alive = false;
+	}
 
-	void ApplyConfigurators(Logger& logger);
+	constexpr void ApplyConfigurators(Logger& logger) noexcept
+	{
+		for (auto& configurator : globalConfigurators)
+			configurator(logger);
+	}
 
 	std::shared_mutex registryMutex;
 	std::vector<Logger*> loggers;
 	std::vector<ConfigureFn> globalConfigurators;
 
-    inline static std::atomic<bool> alive{true};
+	inline static std::atomic<bool> alive{true};
 };
 
 }; // namespace Nibbler::Logging

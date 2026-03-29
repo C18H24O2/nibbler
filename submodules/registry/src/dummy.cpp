@@ -1,1 +1,2 @@
-int iNeedACompilaltionUnit = 010101101;
+[[maybe_unused]]
+static int iNeedACompilaltionUnit = 010101101;

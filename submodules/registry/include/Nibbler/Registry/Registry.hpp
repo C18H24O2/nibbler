@@ -6,16 +6,11 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/27 17:59:36 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/27 19:25:37 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/29 08:43:31 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-
-#include "Nibbler/Util/Canonical.hpp"
-#include <Nibbler/Registry/ResourceKey.hpp>
-#include <Nibbler/Registry/RegistryBase.hpp>
-#include <Nibbler/Util/Identifier.hpp>
 
 #include <shared_mutex>
 #include <mutex>
@@ -28,10 +23,18 @@
 #include <ranges>
 #include <functional>
 
+#include <Nibbler/Util/Canonical.hpp>
+#include <Nibbler/Util/Concat.hpp>
+#include <Nibbler/Util/Identifier.hpp>
+#include <Nibbler/Util/Typename.hpp>
+#include <Nibbler/Registry/ResourceKey.hpp>
+#include <Nibbler/Registry/RegistryBase.hpp>
+// #include <Nibbler/Logging/Logger.hpp>
+
 namespace Nibbler::Registry
 {
 
-using Nibbler::Util::Identifier;
+using namespace Nibbler::Util;
 
 enum class RegistryError
 {
@@ -45,8 +48,8 @@ class Registry : public RegistryBase
 {
 private:
 	Registry() noexcept = delete;
-	DEFAULT_CANONICAL_MEMBERS(Registry)
 public:
+	DEFAULT_CANONICAL_MEMBERS(Registry)
 	Registry(Identifier location) : RegistryBase(std::move(location), std::type_index(typeid(T))) {}
 
 	[[nodiscard]] constexpr std::expected<ResourceKey<T>, RegistryError> Register(Identifier location, std::shared_ptr<T> value) noexcept
@@ -165,6 +168,10 @@ public:
 	}
 
 private:
+	// static constexpr std::string_view LOGGER_PREFIX = "Registry<";
+	// static constexpr std::string_view LOGGER_SUFFIX = ">";
+	// static constexpr auto logger = Logging::Logger(Nibbler::Util::concat_v<LOGGER_PREFIX, Typename<T>(), LOGGER_SUFFIX>);
+
 	mutable std::shared_mutex mutex;
 
 	std::vector<Identifier> idToKey;
@@ -172,4 +179,4 @@ private:
 	std::unordered_map<Identifier, std::shared_ptr<T>> keyToValue;
 };
 
-}
+}; // namespace Nibbler::Registry

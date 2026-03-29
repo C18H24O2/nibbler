@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 00:53:03 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 11:31:21 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/28 22:34:39 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class PluginSystem;
 
 template<typename T>
 concept PluginLike = requires(T t) {
-    { t.id } -> std::convertible_to<Identifier>;
+	{ t.id } -> std::convertible_to<Identifier>;
 	{ t.metadata } -> std::convertible_to<PluginMetadata>;
 };
 

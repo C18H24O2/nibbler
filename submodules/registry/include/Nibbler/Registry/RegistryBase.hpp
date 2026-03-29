@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/27 17:51:39 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 11:42:13 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/03/29 08:40:57 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,20 @@
 #include <typeindex>
 
 #include <Nibbler/Util/Identifier.hpp>
+#include <Nibbler/Util/NonCopyable.hpp>
+#include <Nibbler/Util/NonMovable.hpp>
  
 namespace Nibbler::Registry
 {
 
-using Nibbler::Util::Identifier;
+using namespace Nibbler::Util;
  
-class RegistryBase
+class RegistryBase: public NonCopyable, public NonMovable
 {
 public:
 	constexpr RegistryBase(Identifier location, std::type_index typeIndex) noexcept
 		: location(std::move(location)), typeIndex(typeIndex) {}
 	virtual ~RegistryBase() = default;
- 
-	RegistryBase(const RegistryBase&) = delete;
-	RegistryBase& operator=(const RegistryBase&) = delete;
-	RegistryBase(RegistryBase&&) = delete;
-	RegistryBase& operator=(RegistryBase&&) = delete;
  
 	[[nodiscard]] constexpr const Identifier& Location() const noexcept
 	{
