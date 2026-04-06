@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/27 17:59:36 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/29 08:43:31 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/06 13:27:26 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,15 @@
 #include <ranges>
 #include <functional>
 
+using namespace std::string_view_literals;
+
 #include <Nibbler/Util/Canonical.hpp>
 #include <Nibbler/Util/Concat.hpp>
 #include <Nibbler/Util/Identifier.hpp>
 #include <Nibbler/Util/Typename.hpp>
 #include <Nibbler/Registry/ResourceKey.hpp>
 #include <Nibbler/Registry/RegistryBase.hpp>
-// #include <Nibbler/Logging/Logger.hpp>
+#include <Nibbler/Logging/Logger.hpp>
 
 namespace Nibbler::Registry
 {
@@ -168,9 +170,7 @@ public:
 	}
 
 private:
-	// static constexpr std::string_view LOGGER_PREFIX = "Registry<";
-	// static constexpr std::string_view LOGGER_SUFFIX = ">";
-	// static constexpr auto logger = Logging::Logger(Nibbler::Util::concat_v<LOGGER_PREFIX, Typename<T>(), LOGGER_SUFFIX>);
+	// static constexpr auto logger = Logging::Logger(Nibbler::Util::concat_v<"Registry<"sv, Typename<T>(), ">"sv>);
 
 	mutable std::shared_mutex mutex;
 

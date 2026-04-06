@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Environment.hpp                                    :+:      :+:    :+:   */
+/*   SDLWindow.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/28 11:35:27 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 11:35:45 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/04/06 13:12:18 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/04/06 13:48:45 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include <Nibbler/Plugins/SDL/SDLWindow.hpp>
 
-namespace Nibbler::Plugin
+namespace Nibbler::Plugins::SDL
 {
 
-enum class Environment
+SDLWindow::SDLWindow(SDLWindowPtr sdlWindow, std::string title, int width, int height) noexcept
+	: Client::Window::Window(std::move(title), width, height), sdlWindow(std::move(sdlWindow))
 {
-	Client,
-	Server,
-	Standalone
-};
+}
 
-}; // namespace Nibbler::Plugin
+void SDLWindow::Destroy() noexcept
+{
+}
+
+}; // namespace Nibbler::Plugins::SDL

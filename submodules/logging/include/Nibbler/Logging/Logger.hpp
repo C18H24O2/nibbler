@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:50:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 17:46:51 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/05 23:50:41 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 namespace Nibbler::Logging
 {
 
-class Logger final : private Util::NonCopyable, private Util::NonMovable {
+class Logger final : private Util::NonCopyable {
 public:
 	explicit constexpr Logger(std::string_view name, std::source_location loc = std::source_location::current()) noexcept
 		: name(name), loc(loc)
@@ -131,7 +131,8 @@ public:
 	}
 
 private:
-	struct LogProxy {
+	struct LogProxy
+	{
 		Logger& logger;
 		const LogLevel& level;
 

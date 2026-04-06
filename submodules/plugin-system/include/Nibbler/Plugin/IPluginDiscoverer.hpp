@@ -1,30 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   PluginMetadata.hpp                                 :+:      :+:    :+:   */
+/*   IPluginDiscoverer.hpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/28 00:50:21 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/04/06 10:13:44 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/04/05 18:49:26 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/04/06 14:14:02 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <string_view>
-#include <Nibbler/Util/Identifier.hpp>
+#include <filesystem>
+#include <vector>
+
+#include <Nibbler/Util/Canonical.hpp>
 
 namespace Nibbler::Plugin
 {
 
-struct PluginMetadata
+class IPluginDiscoverer
 {
-	Util::Identifier id;
-	std::string_view name;
-	std::string_view author;
-	std::string_view version;
-	std::string_view description;
+public:
+	DEFAULT_CANONICAL_MEMBERS(IPluginDiscoverer)
+	
+	[[nodiscard]] virtual std::vector<std::filesystem::path> Discover() noexcept = 0;
+protected:
+	IPluginDiscoverer() noexcept = default;
 };
+
 
 }; // namespace Nibbler::Plugin

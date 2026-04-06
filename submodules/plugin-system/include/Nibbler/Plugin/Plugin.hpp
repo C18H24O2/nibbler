@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 00:53:03 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 22:34:39 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/06 14:15:35 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,21 @@ using Nibbler::Util::Identifier;
 
 class PluginSystem;
 
-template<typename T>
-concept PluginLike = requires(T t) {
-	{ t.id } -> std::convertible_to<Identifier>;
-	{ t.metadata } -> std::convertible_to<PluginMetadata>;
-};
-
 struct Plugin
 {
-	virtual ~Plugin() = default;
+	virtual ~Plugin() noexcept = default;
 
-	virtual void Init(PluginSystem& system) = 0;
-	virtual void Shutdown() = 0;
+	virtual bool Init(PluginSystem& system) noexcept = 0;
+	virtual void Shutdown(PluginSystem& system) noexcept = 0;
+	virtual PluginMetadata GetMetadata() const noexcept = 0;
 };
 
 }; // namespace Nibbler::Plugin
 
 #define PLUGIN_ENTRYPOINT_FUNC __Nibbler_GetPlugin
+#define __STR(x) #x
+#define __STR2(x) __STR(x)
+#define PLUGIN_ENTRYPOINT_FUNC_NAME __STR2(PLUGIN_ENTRYPOINT_FUNC)
 #define PLUGIN_DECLARE(T) \
 	__attribute__((visibility("default"))) extern "C" \
 	Nibbler::Plugin::Plugin* PLUGIN_ENTRYPOINT_FUNC() \

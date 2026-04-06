@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 12:54:05 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/29 08:29:55 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/06 13:36:36 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,22 @@ public:
 		return Store().size();
 	}
  
-	template<typename T>
+	template<typename T, typename U = T>
+	requires std::derived_from<U, T>
 	[[nodiscard]] static std::expected<ResourceKey<T>, RegistryError> Register(
 		RegistryKey<T> registryKey,
 		Identifier location,
-		std::shared_ptr<T> value
+		std::shared_ptr<U> value
 	) noexcept {
 		return GetRegistry<T>(registryKey).Register(location, std::move(value));
+	}
+
+	template <typename T>
+	static std::expected<void, RegistryError> Unregister(
+		RegistryKey<T> registryKey,
+		const Identifier& location
+	) noexcept {
+		return GetRegistry<T>(registryKey).Unregister(location);
 	}
 private:
 	static std::unordered_map<Identifier, std::unique_ptr<RegistryBase>>& Store() noexcept

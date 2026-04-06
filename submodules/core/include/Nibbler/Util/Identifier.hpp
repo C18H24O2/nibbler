@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 16:27:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/29 08:43:08 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/06 11:22:19 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,16 @@ class Identifier
 {
 public:
 	DEFAULT_CANONICAL_MEMBERS(Identifier);
+	constexpr Identifier() noexcept 
+	{
+		std::size_t i = 0;
+		for (char c : DEFAULT_NAMESPACE)
+			buffer[i++] = c;
+		separatorIndex = DEFAULT_NAMESPACE.size();
+		for (char c : "unset_identifier")
+			buffer[i++] = c;
+		totalLength = i;
+	}
 
 	[[nodiscard]] static constexpr std::expected<Identifier, IdentifierError>
 		From(std::string_view ns, std::string_view path)

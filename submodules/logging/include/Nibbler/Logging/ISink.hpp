@@ -6,12 +6,13 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:45:09 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:33:20 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/05 18:53:05 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
+#include <Nibbler/Util/Canonical.hpp>
 #include <Nibbler/Logging/LogRecord.hpp>
 
 namespace Nibbler::Logging

@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 00:53:57 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 11:34:03 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/06 14:15:25 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,16 @@ using Nibbler::Util::Identifier;
 
 struct SDLPlugin: public Plugin
 {
-	void Init(PluginSystem& system) override;
-	void Shutdown() override;
+	bool Init(PluginSystem& system) noexcept override;
+	void Shutdown(PluginSystem& system) noexcept override;
 
-	static constexpr auto id = *Identifier::From("nibbler", "sdl");
+	constexpr PluginMetadata GetMetadata() const noexcept override
+	{
+		return metadata;
+	}
+
 	static constexpr PluginMetadata metadata{
+		.id = *Identifier::From("nibbler", "sdl"),
 		.name = "SDL",
 		.author = "kiroussa",
 		.version = "0.0.1",

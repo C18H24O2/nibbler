@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   SDLWindowProvider.hpp                              :+:      :+:    :+:   */
+/*   SDLWindow.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/28 12:57:53 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/04/06 13:08:46 by kiroussa         ###   ########.fr       */
+/*   Created: 2026/04/06 11:45:00 by kiroussa          #+#    #+#             */
+/*   Updated: 2026/04/06 13:48:27 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,30 @@
 
 #include <memory>
 
-#include <Nibbler/Util/Identifier.hpp>
-#include <Nibbler/Client/Window/WindowProvider.hpp>
+#include <SDL3/SDL.h>
+
+#include <Nibbler/Client/Window/Window.hpp>
 
 namespace Nibbler::Plugins::SDL
 {
 
-class SDLWindowProvider: public Client::Window::WindowProvider
+struct SDLWindowDeleter
+{
+	void operator()(SDL_Window* window) const noexcept
+	{
+		SDL_DestroyWindow(window);
+	}
+};
+
+using SDLWindowPtr = std::unique_ptr<SDL_Window, SDLWindowDeleter>;
+
+class SDLWindow final: public Client::Window::Window
 {
 public:
-	SDLWindowProvider() noexcept = default;
-	[[nodiscard]] std::unique_ptr<Client::Window::Window> CreateWindow(const std::string& title, int width, int height) override;
-
-	static constexpr Util::Identifier ID = *Util::Identifier::From("nibbler", "window/provider/sdl");
+	SDLWindow(SDLWindowPtr sdlWindow, std::string title, int width, int height) noexcept;
+	void Destroy() noexcept override;
+private:
+	SDLWindowPtr sdlWindow;
 };
 
 }; // namespace Nibbler::Plugins::SDL

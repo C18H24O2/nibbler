@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/08 02:07:40 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:38:15 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/06 11:37:24 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	std::shared_ptr<IFormatter> formatter = std::make_shared<DefaultFormatter>();
 	std::shared_ptr<ISink> consoleSink = std::make_shared<ConsoleSink>(formatter);
 	LoggerFactory::Instance().AddConfigurator([&consoleSink, &options](Logger& logger) {
-		if (options->verbosity == 2)
+		if (options->verbosity >= 2)
 			logger.SetLevel(LogLevel::Trace);
 		else if (options->verbosity == 1)
 			logger.SetLevel(LogLevel::Debug);
