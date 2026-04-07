@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:48:47 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/28 14:59:07 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/07 03:19:43 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ public:
 	}
  
 	static const LogLevel All;
+	static const LogLevel Spam;
 	static const LogLevel Trace;
 	static const LogLevel Debug;
 	static const LogLevel Info;
@@ -66,6 +67,7 @@ private:
 };
 
 inline constexpr LogLevel LogLevel::All{0, "ALL"};
+inline constexpr LogLevel LogLevel::Spam{50, "SPAM"};
 inline constexpr LogLevel LogLevel::Trace{100, "TRACE"};
 inline constexpr LogLevel LogLevel::Debug{200, "DEBUG"};
 inline constexpr LogLevel LogLevel::Info{300, "INFO"};

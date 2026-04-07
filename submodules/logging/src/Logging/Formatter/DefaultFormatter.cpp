@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 02:24:01 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/25 16:37:27 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/07 03:29:32 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,15 @@ std::string DefaultFormatter::Format(const Logger& logger, const LogRecord& reco
 		return std::format("[{:%H:%M:%S}] [{}/{}] ({}/{}:{}) {}", std::chrono::floor<std::chrono::seconds>(record.time), logger.GetNibblerModule(), record.marker->GetFullName(), record.level.GetName(), filename, record.location.line(), record.message);
 	else
 		return std::format("[{:%H:%M:%S}] [{}] ({}/{}:{}) {}", std::chrono::floor<std::chrono::seconds>(record.time), logger.GetNibblerModule(), record.level.GetName(), filename, record.location.line(), record.message);
+
+	// std::size_t longest = 0;
+	// for (auto& logger : LoggerFactory::Instance().GetAll())
+	// 	longest = std::max(longest, logger->GetNibblerModule().size());
+	//
+	// if (record.marker)
+	// 	return std::format("[{:%H:%M:%S}] {:>{}}/{} ({}/{}:{}) {}", std::chrono::floor<std::chrono::seconds>(record.time), logger.GetNibblerModule(), longest, record.marker->GetFullName(), record.level.GetName(), filename, record.location.line(), record.message);
+	// else
+	// 	return std::format("[{:%H:%M:%S}] {:>{}} ({}/{}:{}) {}", std::chrono::floor<std::chrono::seconds>(record.time), logger.GetNibblerModule(), longest, record.level.GetName(), filename, record.location.line(), record.message);
 }
 
 }; // namespace Nibbler::Logging

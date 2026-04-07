@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 23:12:24 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/03/29 08:46:03 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/07 03:23:00 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,11 @@ public:
 	}
 
 	[[nodiscard]] const Logger* Get(std::string_view name) noexcept;
+
+	[[nodiscard]] constexpr std::vector<Logger*>& GetAll() noexcept
+	{
+		return loggers;
+	}
 
 	// This is used to check whether the LoggerFactory's singleton has been destroyed
 	// by the dynamic loader and prevent Loggers from trying to access it, causing,

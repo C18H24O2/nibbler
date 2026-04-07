@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/05 17:05:05 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/04/06 14:20:12 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/07 03:17:09 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,9 @@ void PluginSystem::LoadPlugins() noexcept
 		{
 			for (auto& path : paths)
 			{
+				auto start = steady_clock::now();
 				auto tryLoad = loader->Load(path);
+				auto end = steady_clock::now();
 				if (!tryLoad)
 				{
 					logger.Error().Emit("Failed to load plugin {}: {}", path.string(), tryLoad.error());
@@ -74,12 +76,11 @@ void PluginSystem::LoadPlugins() noexcept
 					loader->Unload(container);
 					continue;
 				}
-
+				logger.Spam().Emit("Took {}ms to load plugin {}", duration_cast<milliseconds>(end - start).count(), id.ToString());
 				logger.Trace().Emit("Loaded plugin {}, initializing...", id.ToString());
-				auto start = steady_clock::now();
+				start = steady_clock::now();
 				bool result = container.plugin->Init(*this);
-				auto end = steady_clock::now();
-				logger.Trace().Emit("Took {}ms to initialize plugin {}", duration_cast<milliseconds>(end - start).count(), id.ToString());
+				end = steady_clock::now();
 				if (!result)
 				{
 					logger.Error().Emit("Failed to initialize plugin {}", id.ToString());
@@ -89,6 +90,7 @@ void PluginSystem::LoadPlugins() noexcept
 					loader->Unload(container);
 					continue;
 				}
+				logger.Spam().Emit("Took {}ms to initialize plugin {}", duration_cast<milliseconds>(end - start).count(), id.ToString());
 				logger.Trace().Emit("Initialized plugin {}", id.ToString());
 
 				plugins.insert({id, container});

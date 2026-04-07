@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:50:08 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/04/05 23:50:41 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/07 02:29:43 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,7 @@ private:
 	};
 
 public:
+	LogProxy Spam  { *this, LogLevel::Spam  };
 	LogProxy Trace { *this, LogLevel::Trace };
 	LogProxy Debug { *this, LogLevel::Debug };
 	LogProxy Info  { *this, LogLevel::Info  };

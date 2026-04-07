@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 00:53:24 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/04/06 14:21:01 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/04/07 03:17:35 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ bool SDLPlugin::Init(PluginSystem& system) noexcept
 
 void SDLPlugin::Shutdown(PluginSystem& system) noexcept
 {
+	(void) system;
+
 	logger.Info().Emit("Shutting down...");
 	Registry::Registries::Unregister(Client::Window::WindowProvider::REGISTRY_KEY, SDLWindowProvider::ID);
 	if (sdlInitialized)
