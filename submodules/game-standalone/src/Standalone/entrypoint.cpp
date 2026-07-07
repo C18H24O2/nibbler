@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 04:10:59 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/04/06 14:15:04 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/07/07 03:05:09 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ int Entrypoint(Launcher::LaunchOptions& options)
 
 	// Steps:
 	// - Initialize the plugin system
-	// - Setup the internal server
-	// - Setup the client window
+    // - Tell the client to load (will check the window provider)
+	// - Start server ~~on singleplayer load~~ we're standalone dumbass
 	// - Profit
 	return 0;
 }
