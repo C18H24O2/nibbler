@@ -6,9 +6,8 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/08 20:46:50 by kiroussa          #+#    #+#              #
-#    Updated: 2026/04/06 14:10:59 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/07/07 02:10:19 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 include ../../make/submodule.mk
-LDFLAGS += -lSDL3

@@ -6,7 +6,7 @@
 #    By: kiroussa <contact@dynamicdispat.ch>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/05 01:44:00 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/26 00:00:55 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/07/07 02:14:26 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ PROJECT_ROOT := $(shell pwd)
 CURRENT_MODULE := <root>
 MODULE_NAME := root
 
+-include ./make/development.mk
 include ./make/config.mk
 include ./make/colors.mk
 include ./make/functions.mk
@@ -43,7 +44,11 @@ $(SHARED_BUILD_DIR)/%:
 		rm -rf $@; \
 	fi
 
-$(EXECUTABLE): $(FINAL_MODULE_OUTPUT)
+LIB_CLEAN_TASKS :=
+LIB_FCLEAN_TASKS :=
+$(foreach lib,$(DYNMAKE_LIBS),$(eval $(call declareLibraryRules,$(DYNMAKE_LIB_$(lib)_NAME),$(DYNMAKE_LIB_$(lib)_OUTPUT))))
+
+$(EXECUTABLE): $(FINAL_MODULE_OUTPUT) $(LIB_DEPS_OUTPUT)
 	@$(call taskStart,Linking $(BOLD)$<$(RESET) to $(BOLD)$@$(RESET)\n)
 	@ln -sf $< $@
 
@@ -51,13 +56,16 @@ $(foreach module,$(MODULES),$(eval $(call moduleOutput,$(module))))
 $(foreach module,$(MODULES),$(eval $(call moduleDelegate,clean,$(module))))
 $(foreach module,$(MODULES),$(eval $(call moduleDelegate,fclean,$(module))))
 
-.PHONY: clean
-clean: # $(MODULES:%=clean_%)
+.PHONY: oclean
+oclean:
 	@$(call taskStart,Removing build directory $(BOLD)$(SHARED_BUILD_DIR)/$(RESET)\n)
 	@rm -rf $(SHARED_BUILD_DIR)
 
+.PHONY: clean
+clean: $(LIB_CLEAN_TASKS) oclean
+
 .PHONY: fclean
-fclean: clean # $(MODULES:%=fclean_%)
+fclean: $(LIB_FCLEAN_TASKS) oclean
 	@$(call taskStart,Removing executable $(BOLD)$(EXECUTABLE)$(RESET)\n)
 	@rm -f $(EXECUTABLE)
 

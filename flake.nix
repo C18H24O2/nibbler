@@ -3,14 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixpkgs-unstable";
-    systems.url = "github:nix-systems/x86_64-linux";
   };
 
   outputs =
     { self, nixpkgs, ... }@inputs:
     let
       inherit (self) outputs;
-      systems = (import inputs.systems);
+      systems = nixpkgs.lib.systems.flakeExposed;
       forAllSystems = nixpkgs.lib.genAttrs systems;
     in
     {
