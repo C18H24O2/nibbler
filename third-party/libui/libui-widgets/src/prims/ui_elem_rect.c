@@ -1,34 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   element.h                                          :+:      :+:    :+:   */
+/*   ui_elem_rect.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/18 03:07:08 by kiroussa          #+#    #+#             */
+/*   Created: 2026/07/07 02:44:41 by kiroussa          #+#    #+#             */
 /*   Updated: 2026/07/07 02:52:04 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include <libui/element.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stddef.h>
-#include <stdint.h>
-
-#include <libui/prims.h>
-
-typedef struct ui_element
+ui_element_t *
+ui_elem_rect(ui_allocator_t *allocator, ui_pos2d_t size, ui_color_t color)
 {
 	
-
-	struct ui_element	*children;
-	uint32_t			children_count;
-}	ui_element_t;
-
-#ifdef __cplusplus
 }
-#endif

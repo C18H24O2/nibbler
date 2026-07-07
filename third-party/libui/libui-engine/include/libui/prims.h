@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 04:10:39 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/04/28 01:14:11 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/07/07 02:52:07 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ typedef struct
 }	ui_pos2d_t;
 
 #define UI_POS2D(x, y) ((ui_pos2d_t) { .x = x, .y = y })
+#define UI_SIZE2D(w, h) ((ui_pos2d_t) { .x = w, .y = h })
+
 
 typedef struct
 {
