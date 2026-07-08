@@ -15,6 +15,7 @@ in
     ncurses
     bear
 
+    # graphics
     glfw
     libXinerama.dev
     libXi.dev

@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 04:10:59 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/07/07 03:05:09 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/07/07 22:26:53 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,17 +47,17 @@ int Entrypoint(Launcher::LaunchOptions& options)
 	pluginSystem.AddLoader(std::make_unique<Plugin::DlPluginLoader>());
 	pluginSystem.LoadPlugins();
 	
-	auto& reg = Registries::GetRegistry(Client::Window::WindowProvider::REGISTRY_KEY);
-	auto entries = reg.Entries();
-	if (entries.empty())
-	{
-		logger.Error().Emit("No window providers found");
-		return 1;
-	}
-	for (const auto& [id, provider] : entries)
-	{
-		logger.Debug().Emit("Found window provider: {}", id);
-	}
+	// auto& reg = Registries::GetRegistry(Client::Window::WindowProvider::REGISTRY_KEY);
+	// auto entries = reg.Entries();
+	// if (entries.empty())
+	// {
+	// 	logger.Error().Emit("No window providers found");
+	// 	return 1;
+	// }
+	// for (const auto& [id, provider] : entries)
+	// {
+	// 	logger.Debug().Emit("Found window provider: {}", id);
+	// }
 
 	// Steps:
 	// - Initialize the plugin system

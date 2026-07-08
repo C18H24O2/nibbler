@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/07 16:36:43 by kiroussa          #+#    #+#              #
-#    Updated: 2026/07/07 02:14:01 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/07/07 19:49:42 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,7 @@ NO_PLUGINS_MODULES := $(filter-out $(PLUGIN_MODULES),$(MODULES))
 CXXFLAGS += $(NO_PLUGINS_MODULES:%=-I$(PROJECT_ROOT)/$(MODULES_DIR)/%/$(INC_DIR))
 
 # libraries
-LIBRARIES := $(shell find $(PROJECT_ROOT)/$(THIRD_PARTY_DIR) -maxdepth 1 -mindepth 1 -type d | LC_ALL=C sort 2>/dev/null)
+THIRD_PARTY_LIBS := $(shell find $(PROJECT_ROOT)/$(THIRD_PARTY_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | LC_ALL=C sort 2>/dev/null)
 define __declareLibraryVars
 DYNMAKE_LIBS += $(1)
 DYNMAKE_LIB_$(1)_NAME := $(1)
@@ -70,9 +70,11 @@ define declareLibrary
 $(eval $(call __declareLibraryVars,$(1),$(2)))
 endef
 
-LIBRARIES_DYNMAKE_DECL_FILES := $(LIBRARIES:%=%/lib.dyn.mk)
-$(foreach file,$(LIBRARIES_DYNMAKE_DECL_FILES),$(eval include $(file)))
-LDFLAGS += $(EXTRA_LDFLAGS)
+define __importLibraryMk
+$(eval _LIBDIR := $(PROJECT_ROOT)/$(THIRD_PARTY_DIR)/$(1))
+include $(_LIBDIR)/lib.dyn.mk
+endef
+$(foreach lib,$(THIRD_PARTY_LIBS),$(eval $(call __importLibraryMk,$(lib))))
 
 define declareLibraryRules
 ifeq ($(DEBUG),1)
