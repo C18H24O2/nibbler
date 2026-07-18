@@ -7,6 +7,9 @@ let
 in
 (pkgs.mkShell.override { inherit stdenv; }) {
   nativeBuildInputs = with pkgs; [
+    ripgrep
+    fd
+
     nasm
     valgrind
     gdb

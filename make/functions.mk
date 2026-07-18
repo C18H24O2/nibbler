@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/07 16:35:38 by kiroussa          #+#    #+#              #
-#    Updated: 2026/07/07 01:51:07 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/07/18 03:08:30 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ moduleWidth = $(shell printf "%s" "$(1)" | wc -L)
 MAX_MODULE_NAME_WIDTH ?= $(shell printf "%s" "$(MODULES)" | tr ' ' '\n' | awk '{ if (length > max) { max = length } } END { print max }')
 padded = $(shell printf "%$(MAX_MODULE_NAME_WIDTH)s" "$(1)")
 
-provideModuleOutputFile = $(if $(filter $(FINAL_MODULE),$(1)),$(1).out,libnibbler$(1).so)
+isModuleExecutable = $(shell rg "^IS_EXEC *:?= *1" $(PROJECT_ROOT)/$(MODULES_DIR)/$(1)/Makefile >/dev/null 2>&1 && echo 1)
+provideModuleOutputFile = $(if $(call isModuleExecutable,$(1)),$(1).out,libnibbler$(1).so)
 provideModuleOutput = $(SHARED_BUILD_DIR)/$(1)/$(call provideModuleOutputFile,$(1))
 taskStart = printf "$(BRED)$(call padded,$(CURRENT_MODULE))$(RESET)$(BBLACK) | $(RESET)$(1)"

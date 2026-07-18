@@ -6,7 +6,7 @@
 /*   By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 03:09:51 by kiroussa          #+#    #+#             */
-/*   Updated: 2026/07/08 02:16:58 by kiroussa         ###   ########.fr       */
+/*   Updated: 2026/07/18 02:52:30 by kiroussa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ ui_window_tick(ui_window_t *window)
 
 	window->engine.renderer.begin_frame(window->engine.renderer.handle);
 	ui_element_t *root = window->root_element;
+	(void) root;
 	// window->engine
 	window->engine.renderer.end_frame(window->engine.renderer.handle);
 	return UI_WINDOW_TICK_OK;

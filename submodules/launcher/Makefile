@@ -6,8 +6,10 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/08 01:38:11 by kiroussa          #+#    #+#              #
-#    Updated: 2026/03/08 01:39:05 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/07/18 02:51:31 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+IS_EXEC := 1
 
 include ../../make/submodule.mk

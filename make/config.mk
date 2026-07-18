@@ -6,7 +6,7 @@
 #    By: kiroussa <oss@dynamicdispat.ch>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/07 16:36:43 by kiroussa          #+#    #+#              #
-#    Updated: 2026/07/07 19:49:42 by kiroussa         ###   ########.fr        #
+#    Updated: 2026/07/18 03:00:51 by kiroussa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,8 @@ BUILD_DIR := $(SHARED_BUILD_DIR)/$(MODULE_NAME)
 OBJ_DIR := $(BUILD_DIR)/obj
 DEP_DIR := $(BUILD_DIR)/dep
 
+IS_EXEC ?= 0
+
 FINAL_MODULE := launcher
 MODULES := $(shell find $(PROJECT_ROOT)/$(MODULES_DIR) -maxdepth 1 -mindepth 1 -type d -exec basename {} \; | LC_ALL=C sort 2>/dev/null)
 
@@ -51,6 +53,7 @@ LIB_MODULES := $(filter-out $(FINAL_MODULE),$(MODULES))
 LIB_MODULES_OUTPUT := $(foreach module,$(LIB_MODULES),$(call provideModuleOutput,$(module)))
 LIB_MODULES_NOPLUG := $(filter-out $(PLUGIN_MODULES),$(LIB_MODULES))
 LIB_MODULES_NOPLUG_OUTPUT := $(foreach module,$(LIB_MODULES_NOPLUG),$(call provideModuleOutput,$(module)))
+LIB_MODULES_NOPLUG_OUTPUT := $(filter-out %.out,$(LIB_MODULES_NOPLUG_OUTPUT))
 
 
 CXXFLAGS += -I$(PROJECT_ROOT)/$(MODULES_DIR)/$(CURRENT_MODULE)/$(INC_DIR)
